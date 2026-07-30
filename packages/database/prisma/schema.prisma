@@ -1,0 +1,507 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  runtime      = "nodejs"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum CompanyStatus {
+  ACTIVE
+  INACTIVE
+
+  @@map("company_status")
+}
+
+enum UserRole {
+  ADMIN
+  EMPLOYEE
+
+  @@map("user_role")
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+
+  @@map("user_status")
+}
+
+enum AdsEntryStatus {
+  ACTIVE
+  CANCELED
+
+  @@map("ads_entry_status")
+}
+
+enum PaymentReceiptStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELED
+  REVERSED
+
+  @@map("payment_receipt_status")
+}
+
+enum DailyFinancialResultStatus {
+  POSITIVE
+  ADS_DEBT
+  ZERO
+
+  @@map("daily_financial_result_status")
+}
+
+enum WeeklySettlementStatus {
+  OPEN
+  CLOSED
+  REVIEW_REQUIRED
+  PAID
+
+  @@map("weekly_settlement_status")
+}
+
+enum FinancialAdjustmentType {
+  CREDIT
+  DEBIT
+
+  @@map("financial_adjustment_type")
+}
+
+enum PushDeliveryStatus {
+  PENDING
+  SENT
+  FAILED
+
+  @@map("push_delivery_status")
+}
+
+enum OutboxEventStatus {
+  PENDING
+  PROCESSING
+  PROCESSED
+  FAILED
+
+  @@map("outbox_event_status")
+}
+
+model Company {
+  id        String        @id @default(uuid()) @db.Uuid
+  name      String
+  slug      String        @unique
+  status    CompanyStatus @default(ACTIVE)
+  createdAt DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  settings              CompanySettings?
+  users                 User[]
+  bankFeePolicies       BankFeePolicy[]
+  adsEntries            AdsEntry[]
+  paymentReceipts       PaymentReceipt[]
+  dailyFinancialResults DailyFinancialResult[]
+  weeklySettlements     WeeklySettlement[]
+  financialAdjustments  FinancialAdjustment[]
+  notifications         Notification[]
+  auditLogs             AuditLog[]
+  outboxEvents          OutboxEvent[]
+
+  @@map("companies")
+}
+
+model CompanySettings {
+  id           String   @id @default(uuid()) @db.Uuid
+  companyId    String   @unique @map("company_id") @db.Uuid
+  timezone     String
+  weekStartDay Int      @map("week_start_day")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
+
+  @@map("company_settings")
+}
+
+model User {
+  id           String     @id @default(uuid()) @db.Uuid
+  companyId    String     @map("company_id") @db.Uuid
+  name         String
+  email        String
+  passwordHash String     @map("password_hash")
+  role         UserRole
+  status       UserStatus @default(ACTIVE)
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  company             Company              @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  employee            Employee?
+  refreshSessions     RefreshSession[]
+  passwordResetTokens PasswordResetToken[]
+
+  reviewedReceipts PaymentReceipt[] @relation("PaymentReceiptReviewedBy")
+  reversedReceipts PaymentReceipt[] @relation("PaymentReceiptReversedBy")
+
+  closedSettlements WeeklySettlement[] @relation("WeeklySettlementClosedBy")
+  paidSettlements   WeeklySettlement[] @relation("WeeklySettlementPaidBy")
+
+  createdAdjustments FinancialAdjustment[] @relation("FinancialAdjustmentCreatedBy")
+
+  notificationRecipients NotificationRecipient[]
+  pushDeliveries         PushDelivery[]
+
+  auditLogs AuditLog[] @relation("AuditLogActor")
+
+  @@unique([companyId, email])
+  @@index([companyId, status])
+  @@map("users")
+}
+
+model Employee {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  commissionPolicies    EmployeeCommissionPolicy[]
+  adsEntries            AdsEntry[]
+  paymentReceipts       PaymentReceipt[]
+  dailyFinancialResults DailyFinancialResult[]
+  weeklySettlements     WeeklySettlement[]
+  financialAdjustments  FinancialAdjustment[]
+
+  @@map("employees")
+}
+
+model RefreshSession {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(3)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@map("refresh_sessions")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(3)
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@map("password_reset_tokens")
+}
+
+model BankFeePolicy {
+  id             String    @id @default(uuid()) @db.Uuid
+  companyId      String    @map("company_id") @db.Uuid
+  percentageBps  Int       @map("percentage_bps")
+  effectiveFrom  DateTime  @map("effective_from") @db.Date
+  effectiveUntil DateTime? @map("effective_until") @db.Date
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
+
+  @@index([companyId, effectiveFrom])
+  @@map("bank_fee_policies")
+}
+
+model EmployeeCommissionPolicy {
+  id             String    @id @default(uuid()) @db.Uuid
+  employeeId     String    @map("employee_id") @db.Uuid
+  percentageBps  Int       @map("percentage_bps")
+  effectiveFrom  DateTime  @map("effective_from") @db.Date
+  effectiveUntil DateTime? @map("effective_until") @db.Date
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([employeeId, effectiveFrom])
+  @@map("employee_commission_policies")
+}
+
+model AdsEntry {
+  id           String         @id @default(uuid()) @db.Uuid
+  companyId    String         @map("company_id") @db.Uuid
+  employeeId   String         @map("employee_id") @db.Uuid
+  businessDate DateTime       @map("business_date") @db.Date
+  amount       Decimal        @db.Decimal(14, 2)
+  status       AdsEntryStatus @default(ACTIVE)
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+  canceledAt   DateTime?      @map("canceled_at") @db.Timestamptz(3)
+
+  company  Company  @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@index([employeeId, businessDate, status])
+  @@index([companyId, businessDate, status])
+  @@map("ads_entries")
+}
+
+model PaymentReceipt {
+  id           String               @id @default(uuid()) @db.Uuid
+  companyId    String               @map("company_id") @db.Uuid
+  employeeId   String               @map("employee_id") @db.Uuid
+  amount       Decimal              @db.Decimal(14, 2)
+  payerName    String               @map("payer_name")
+  paidAt       DateTime             @map("paid_at") @db.Timestamptz(3)
+  businessDate DateTime             @map("business_date") @db.Date
+  status       PaymentReceiptStatus @default(PENDING)
+
+  reviewedByUserId String?   @map("reviewed_by_user_id") @db.Uuid
+  reviewedAt       DateTime? @map("reviewed_at") @db.Timestamptz(3)
+  reviewNote       String?   @map("review_note")
+
+  reversedByUserId String?   @map("reversed_by_user_id") @db.Uuid
+  reversedAt       DateTime? @map("reversed_at") @db.Timestamptz(3)
+  reversalReason   String?   @map("reversal_reason")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  company  Company  @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  reviewedBy User? @relation("PaymentReceiptReviewedBy", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+  reversedBy User? @relation("PaymentReceiptReversedBy", fields: [reversedByUserId], references: [id], onDelete: SetNull)
+
+  file ReceiptFile?
+
+  @@index([employeeId, businessDate, status])
+  @@index([companyId, businessDate, status])
+  @@index([status, createdAt])
+  @@map("payment_receipts")
+}
+
+model ReceiptFile {
+  id        String   @id @default(uuid()) @db.Uuid
+  receiptId String   @unique @map("receipt_id") @db.Uuid
+  provider  String
+  objectKey String   @unique @map("object_key")
+  mimeType  String   @map("mime_type")
+  sizeBytes BigInt   @map("size_bytes")
+  checksum  String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  receipt PaymentReceipt @relation(fields: [receiptId], references: [id], onDelete: Restrict)
+
+  @@map("receipt_files")
+}
+
+model DailyFinancialResult {
+  id           String   @id @default(uuid()) @db.Uuid
+  companyId    String   @map("company_id") @db.Uuid
+  employeeId   String   @map("employee_id") @db.Uuid
+  businessDate DateTime @map("business_date") @db.Date
+
+  approvedRevenue Decimal @map("approved_revenue") @db.Decimal(14, 2)
+
+  bankFeePercentageBps Int     @map("bank_fee_percentage_bps")
+  bankCost             Decimal @map("bank_cost") @db.Decimal(14, 2)
+  revenueAfterBank     Decimal @map("revenue_after_bank") @db.Decimal(14, 2)
+
+  adsCost        Decimal @map("ads_cost") @db.Decimal(14, 2)
+  openingAdsDebt Decimal @map("opening_ads_debt") @db.Decimal(14, 2)
+
+  resultBeforeCommission Decimal @map("result_before_commission") @db.Decimal(14, 2)
+
+  employeeCommissionPercentageBps Int     @map("employee_commission_percentage_bps")
+  employeeAmount                  Decimal @map("employee_amount") @db.Decimal(14, 2)
+  adminProfit                     Decimal @map("admin_profit") @db.Decimal(14, 2)
+  closingAdsDebt                  Decimal @map("closing_ads_debt") @db.Decimal(14, 2)
+
+  status DailyFinancialResultStatus
+
+  calculatedAt DateTime @default(now()) @map("calculated_at") @db.Timestamptz(3)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  company  Company  @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  @@unique([employeeId, businessDate])
+  @@index([companyId, businessDate])
+  @@index([employeeId, businessDate])
+  @@map("daily_financial_results")
+}
+
+model WeeklySettlement {
+  id          String                 @id @default(uuid()) @db.Uuid
+  companyId   String                 @map("company_id") @db.Uuid
+  employeeId  String                 @map("employee_id") @db.Uuid
+  periodStart DateTime               @map("period_start") @db.Date
+  periodEnd   DateTime               @map("period_end") @db.Date
+  status      WeeklySettlementStatus @default(OPEN)
+
+  approvedRevenue Decimal @map("approved_revenue") @db.Decimal(14, 2)
+  bankCost        Decimal @map("bank_cost") @db.Decimal(14, 2)
+  adsCost         Decimal @map("ads_cost") @db.Decimal(14, 2)
+  employeeAmount  Decimal @map("employee_amount") @db.Decimal(14, 2)
+  adminProfit     Decimal @map("admin_profit") @db.Decimal(14, 2)
+  openingAdsDebt  Decimal @map("opening_ads_debt") @db.Decimal(14, 2)
+  closingAdsDebt  Decimal @map("closing_ads_debt") @db.Decimal(14, 2)
+
+  closedByUserId String?   @map("closed_by_user_id") @db.Uuid
+  closedAt       DateTime? @map("closed_at") @db.Timestamptz(3)
+
+  paidByUserId String?   @map("paid_by_user_id") @db.Uuid
+  paidAt       DateTime? @map("paid_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  company  Company  @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+  closedBy User? @relation("WeeklySettlementClosedBy", fields: [closedByUserId], references: [id], onDelete: SetNull)
+  paidBy   User? @relation("WeeklySettlementPaidBy", fields: [paidByUserId], references: [id], onDelete: SetNull)
+
+  adjustments FinancialAdjustment[]
+
+  @@unique([employeeId, periodStart, periodEnd])
+  @@index([companyId, periodStart, periodEnd])
+  @@index([employeeId, status])
+  @@map("weekly_settlements")
+}
+
+model FinancialAdjustment {
+  id           String                  @id @default(uuid()) @db.Uuid
+  companyId    String                  @map("company_id") @db.Uuid
+  employeeId   String                  @map("employee_id") @db.Uuid
+  settlementId String                  @map("settlement_id") @db.Uuid
+  type         FinancialAdjustmentType
+  amount       Decimal                 @db.Decimal(14, 2)
+  reason       String
+
+  originType String  @map("origin_type")
+  originId   String? @map("origin_id")
+
+  createdByUserId String?  @map("created_by_user_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  company    Company          @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  employee   Employee         @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  settlement WeeklySettlement @relation(fields: [settlementId], references: [id], onDelete: Restrict)
+
+  createdBy User? @relation("FinancialAdjustmentCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  @@index([settlementId, createdAt])
+  @@index([employeeId, createdAt])
+  @@map("financial_adjustments")
+}
+
+model Notification {
+  id         String   @id @default(uuid()) @db.Uuid
+  companyId  String   @map("company_id") @db.Uuid
+  type       String
+  title      String
+  message    String
+  entityType String?  @map("entity_type")
+  entityId   String?  @map("entity_id")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
+
+  recipients     NotificationRecipient[]
+  pushDeliveries PushDelivery[]
+
+  @@index([companyId, createdAt])
+  @@map("notifications")
+}
+
+model NotificationRecipient {
+  id             String    @id @default(uuid()) @db.Uuid
+  notificationId String    @map("notification_id") @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  readAt         DateTime? @map("read_at") @db.Timestamptz(3)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, userId])
+  @@index([userId, readAt])
+  @@map("notification_recipients")
+}
+
+model PushDelivery {
+  id             String             @id @default(uuid()) @db.Uuid
+  notificationId String             @map("notification_id") @db.Uuid
+  userId         String             @map("user_id") @db.Uuid
+  status         PushDeliveryStatus @default(PENDING)
+  attempts       Int                @default(0)
+  lastError      String?            @map("last_error")
+  providerId     String?            @map("provider_id")
+  nextAttemptAt  DateTime?          @map("next_attempt_at") @db.Timestamptz(3)
+  sentAt         DateTime?          @map("sent_at") @db.Timestamptz(3)
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, userId])
+  @@index([status, nextAttemptAt])
+  @@map("push_deliveries")
+}
+
+model AuditLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  companyId   String   @map("company_id") @db.Uuid
+  actorUserId String?  @map("actor_user_id") @db.Uuid
+  action      String
+  entityType  String   @map("entity_type")
+  entityId    String?  @map("entity_id")
+  before      Json?
+  after       Json?
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  actor   User?   @relation("AuditLogActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, createdAt])
+  @@index([entityType, entityId])
+  @@index([actorUserId, createdAt])
+  @@map("audit_logs")
+}
+
+model OutboxEvent {
+  id            String            @id @default(uuid()) @db.Uuid
+  companyId     String            @map("company_id") @db.Uuid
+  eventType     String            @map("event_type")
+  aggregateType String            @map("aggregate_type")
+  aggregateId   String            @map("aggregate_id")
+  payload       Json
+  status        OutboxEventStatus @default(PENDING)
+  attempts      Int               @default(0)
+  availableAt   DateTime          @default(now()) @map("available_at") @db.Timestamptz(3)
+  processedAt   DateTime?         @map("processed_at") @db.Timestamptz(3)
+  lastError     String?           @map("last_error")
+  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime          @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
+
+  @@index([status, availableAt])
+  @@index([companyId, createdAt])
+  @@index([aggregateType, aggregateId])
+  @@map("outbox_events")
+}

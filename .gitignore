@@ -46,3 +46,7 @@ temp/
 
 # Railway CLI local state
 .railway/
+
+
+# Prisma generated client
+/packages/database/src/generated/prisma/
