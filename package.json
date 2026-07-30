@@ -1,0 +1,23 @@
+{
+  "name": "crm-gestao",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CRM de Gestão Comercial e Contabilidade",
+  "packageManager": "pnpm@11.18.0",
+  "engines": {
+    "node": ">=24.0.0 <25",
+    "pnpm": ">=11.0.0 <12"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "clean": "turbo run clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.10.7",
+    "typescript": "7.0.2"
+  }
+}
