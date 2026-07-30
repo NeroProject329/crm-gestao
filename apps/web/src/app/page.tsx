@@ -14,8 +14,8 @@ export default function Home() {
         </h1>
 
         <p className="mt-3 text-zinc-400">
-          Web application is running.
-        </p>
+  Development environment is running.
+</p>
       </div>
     </main>
   );
