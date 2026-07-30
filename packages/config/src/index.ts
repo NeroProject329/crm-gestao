@@ -56,6 +56,30 @@ export const infrastructureEnvSchema = z.object({
   REDIS_URL: redisUrlSchema,
 });
 
+export const authEnvSchema = z.object({
+  JWT_ACCESS_SECRET: z.string().min(32),
+
+  JWT_ACCESS_TTL_SECONDS: z.coerce
+    .number()
+    .int()
+    .min(60)
+    .max(86400)
+    .default(900),
+
+  AUTH_REFRESH_TTL_DAYS: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(90)
+    .default(30),
+
+  AUTH_COOKIE_SAME_SITE: z
+    .enum(['strict', 'lax', 'none'])
+    .default('lax'),
+
+  WEB_ORIGIN: z.url().optional(),
+});
+
 export const r2EnvSchema = z.object({
   R2_ENDPOINT: z.url(),
   R2_REGION: z.literal('auto').default('auto'),
@@ -73,12 +97,26 @@ export const webEnvSchema = z.object({
   NEXT_PUBLIC_API_URL: z.url(),
 });
 
-export type ApiBootstrapEnv = z.infer<typeof apiBootstrapEnvSchema>;
-export type WorkerBootstrapEnv = z.infer<typeof workerBootstrapEnvSchema>;
-export type InfrastructureEnv = z.infer<typeof infrastructureEnvSchema>;
-export type R2Env = z.infer<typeof r2EnvSchema>;
-export type PushcutEnv = z.infer<typeof pushcutEnvSchema>;
-export type WebEnv = z.infer<typeof webEnvSchema>;
+export type ApiBootstrapEnv =
+  z.infer<typeof apiBootstrapEnvSchema>;
+
+export type WorkerBootstrapEnv =
+  z.infer<typeof workerBootstrapEnvSchema>;
+
+export type InfrastructureEnv =
+  z.infer<typeof infrastructureEnvSchema>;
+
+export type AuthEnv =
+  z.infer<typeof authEnvSchema>;
+
+export type R2Env =
+  z.infer<typeof r2EnvSchema>;
+
+export type PushcutEnv =
+  z.infer<typeof pushcutEnvSchema>;
+
+export type WebEnv =
+  z.infer<typeof webEnvSchema>;
 
 export function parseApiBootstrapEnv(
   env: Record<string, string | undefined>,
@@ -96,6 +134,12 @@ export function parseInfrastructureEnv(
   env: Record<string, string | undefined>,
 ): InfrastructureEnv {
   return infrastructureEnvSchema.parse(env);
+}
+
+export function parseAuthEnv(
+  env: Record<string, string | undefined>,
+): AuthEnv {
+  return authEnvSchema.parse(env);
 }
 
 export function parseR2Env(
