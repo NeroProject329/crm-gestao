@@ -1,29 +1,94 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import request from 'supertest';
-import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+import {
+  type INestApplication,
+} from '@nestjs/common';
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+import {
+  Test,
+  type TestingModule,
+} from '@nestjs/testing';
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+import request
+  from 'supertest';
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
-  });
+import {
+  AppController,
+} from '../src/app.controller';
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
-  });
+import {
+  AppService,
+} from '../src/app.service';
 
-  afterEach(async () => {
-    await app.close();
-  });
-});
+describe(
+  'AppController (e2e)',
+  () => {
+    let app:
+      INestApplication;
+
+    beforeAll(
+      async () => {
+        /*
+         * Este teste verifica somente
+         * o endpoint público de health.
+         *
+         * Não precisamos inicializar:
+         *
+         * - PostgreSQL
+         * - Redis
+         * - R2
+         * - Worker
+         * - Auth
+         *
+         * Os E2E de segurança possuem
+         * seu próprio módulo controlado.
+         */
+        const moduleFixture:
+          TestingModule =
+          await Test
+            .createTestingModule({
+              controllers: [
+                AppController,
+              ],
+
+              providers: [
+                AppService,
+              ],
+            })
+            .compile();
+
+        app =
+          moduleFixture
+            .createNestApplication();
+
+        await app.init();
+      },
+    );
+
+    afterAll(
+      async () => {
+        await app.close();
+      },
+    );
+
+    it(
+      '/health (GET)',
+      async () => {
+        await request(
+          app.getHttpServer(),
+        )
+          .get(
+            '/health',
+          )
+          .expect(
+            200,
+          )
+          .expect({
+            status:
+              'ok',
+
+            service:
+              'crm-api',
+          });
+      },
+    );
+  },
+);

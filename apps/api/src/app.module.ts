@@ -4,6 +4,7 @@ import {
 
 import {
   APP_GUARD,
+  APP_INTERCEPTOR,
 } from '@nestjs/core';
 
 import {
@@ -48,6 +49,10 @@ import {
 } from './commissions/commissions.module';
 
 import {
+  HttpLoggingInterceptor,
+} from './common/http-logging.interceptor';
+
+import {
   DashboardModule,
 } from './dashboard/dashboard.module';
 
@@ -68,12 +73,12 @@ import {
 } from './receipts/receipts.module';
 
 import {
-  UploadsModule,
-} from './uploads/uploads.module';
-
-import {
   SettlementsModule,
 } from './settlements/settlements.module';
+
+import {
+  UploadsModule,
+} from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -94,6 +99,12 @@ import {
     RankingModule,
     SettlementsModule,
 
+    /*
+     * Defesa geral.
+     *
+     * Endpoints sensíveis como login possuem
+     * limites menores com @Throttle().
+     */
     ThrottlerModule.forRoot([
       {
         name:
@@ -115,6 +126,10 @@ import {
   providers: [
     AppService,
 
+    /* =====================================================
+       RATE LIMIT
+    ===================================================== */
+
     {
       provide:
         APP_GUARD,
@@ -122,6 +137,10 @@ import {
       useClass:
         ThrottlerGuard,
     },
+
+    /* =====================================================
+       AUTHENTICATION
+    ===================================================== */
 
     {
       provide:
@@ -131,6 +150,10 @@ import {
         JwtAuthGuard,
     },
 
+    /* =====================================================
+       RBAC
+    ===================================================== */
+
     {
       provide:
         APP_GUARD,
@@ -139,12 +162,28 @@ import {
         RolesGuard,
     },
 
+    /* =====================================================
+       CSRF
+    ===================================================== */
+
     {
       provide:
         APP_GUARD,
 
       useClass:
         CsrfGuard,
+    },
+
+    /* =====================================================
+       STRUCTURED HTTP LOGGING
+    ===================================================== */
+
+    {
+      provide:
+        APP_INTERCEPTOR,
+
+      useClass:
+        HttpLoggingInterceptor,
     },
   ],
 })
