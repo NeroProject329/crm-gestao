@@ -120,3 +120,13 @@ export interface AdminReceiptActionResponse {
     | ReceiptRecalculationView
     | null;
 }
+
+export type {
+  EmployeeDashboardPreset,
+  EmployeeFinancialStatus,
+  EmployeeDashboardPeriodView,
+  EmployeeDashboardProfileView,
+  EmployeeFinancialSummaryView,
+  EmployeeFinancialDayView,
+  EmployeeDashboardView,
+} from './dashboard';

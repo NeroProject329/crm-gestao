@@ -26,6 +26,7 @@ import {
 
 import type {
   AuthSessionResponse,
+  AuthenticatedUserView,
 } from '@crm/contracts';
 
 import type {
@@ -62,14 +63,16 @@ import {
   Public,
 } from './decorators/public.decorator';
 
-
-
 @Controller('api/v1/auth')
 export class AuthController {
   constructor(
     private readonly auth:
       AuthService,
   ) {}
+
+  /* =======================================================
+     LOGIN
+  ======================================================= */
 
   @Public()
   @Throttle({
@@ -78,7 +81,9 @@ export class AuthController {
       ttl: 60_000,
     },
   })
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(
+    HttpStatus.OK,
+  )
   @Post('login')
   async login(
     @Body()
@@ -90,7 +95,9 @@ export class AuthController {
     response: Response,
   ): Promise<AuthSessionResponse> {
     const bundle =
-      await this.auth.login(dto);
+      await this.auth.login(
+        dto,
+      );
 
     this.setCookies(
       response,
@@ -100,6 +107,10 @@ export class AuthController {
     return bundle.response;
   }
 
+  /* =======================================================
+     REFRESH
+  ======================================================= */
+
   @Public()
   @Throttle({
     default: {
@@ -107,7 +118,9 @@ export class AuthController {
       ttl: 60_000,
     },
   })
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(
+    HttpStatus.OK,
+  )
   @Post('refresh')
   async refresh(
     @Req()
@@ -144,6 +157,10 @@ export class AuthController {
     return bundle.response;
   }
 
+  /* =======================================================
+     LOGOUT
+  ======================================================= */
+
   @Public()
   @Throttle({
     default: {
@@ -179,13 +196,23 @@ export class AuthController {
     );
   }
 
+  /* =======================================================
+     CURRENT USER
+  ======================================================= */
+
   @Get('me')
   me(
     @CurrentUser()
     auth: AuthContext,
-  ): AuthContext {
-    return auth;
+  ): Promise<AuthenticatedUserView> {
+    return this.auth.currentUser(
+      auth,
+    );
   }
+
+  /* =======================================================
+     CHANGE PASSWORD
+  ======================================================= */
 
   @HttpCode(
     HttpStatus.NO_CONTENT,
@@ -213,6 +240,10 @@ export class AuthController {
       response,
     );
   }
+
+  /* =======================================================
+     COOKIE SETUP
+  ======================================================= */
 
   private setCookies(
     response: Response,
@@ -296,6 +327,10 @@ export class AuthController {
     );
   }
 
+  /* =======================================================
+     COOKIE CLEANUP
+  ======================================================= */
+
   private clearCookies(
     response: Response,
   ): void {
@@ -312,8 +347,10 @@ export class AuthController {
       ACCESS_COOKIE,
       {
         secure,
+
         sameSite:
           env.AUTH_COOKIE_SAME_SITE,
+
         path: '/',
       },
     );
@@ -322,6 +359,7 @@ export class AuthController {
       REFRESH_COOKIE,
       {
         secure,
+
         sameSite:
           env.AUTH_COOKIE_SAME_SITE,
 
@@ -334,12 +372,18 @@ export class AuthController {
       CSRF_COOKIE,
       {
         secure,
+
         sameSite:
           env.AUTH_COOKIE_SAME_SITE,
+
         path: '/',
       },
     );
   }
+
+  /* =======================================================
+     PUBLIC CSRF VALIDATION
+  ======================================================= */
 
   private validatePublicCsrf(
     request: Request,

@@ -64,6 +64,10 @@ import {
   ReceiptsModule,
 } from './receipts/receipts.module';
 
+import {
+  DashboardModule,
+} from './dashboard/dashboard.module';
+
 @Module({
  imports: [
   DatabaseModule,
@@ -79,6 +83,7 @@ import {
 
   UploadsModule,
   ReceiptsModule,
+  DashboardModule,
 
   ThrottlerModule.forRoot([
     {

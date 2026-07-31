@@ -85,6 +85,10 @@ export class AuthService {
       JwtService,
   ) {}
 
+  /* =======================================================
+     LOGIN
+  ======================================================= */
+
   async login(
     dto: LoginDto,
   ): Promise<AuthBundle> {
@@ -98,7 +102,8 @@ export class AuthService {
         .company.findUnique({
           where: {
             slug:
-              dto.companySlug.trim(),
+              dto.companySlug
+                .trim(),
           },
 
           select: {
@@ -124,6 +129,7 @@ export class AuthService {
             companyId_email: {
               companyId:
                 company.id,
+
               email,
             },
           },
@@ -163,6 +169,10 @@ export class AuthService {
       user,
     );
   }
+
+  /* =======================================================
+     REFRESH
+  ======================================================= */
 
   async refresh(
     refreshToken: string,
@@ -222,10 +232,12 @@ export class AuthService {
             if (
               !session ||
               session.revokedAt ||
-              session.expiresAt <= now ||
+              session.expiresAt <=
+                now ||
               session.user.status !==
                 UserStatus.ACTIVE ||
-              session.user.company.status !==
+              session.user.company
+                .status !==
                 CompanyStatus.ACTIVE
             ) {
               throw new UnauthorizedException();
@@ -258,7 +270,8 @@ export class AuthService {
                 });
 
             if (
-              revoked.count !== 1
+              revoked.count !==
+              1
             ) {
               throw new UnauthorizedException();
             }
@@ -297,6 +310,7 @@ export class AuthService {
 
     return {
       accessToken,
+
       refreshToken:
         newRefreshToken,
 
@@ -309,6 +323,10 @@ export class AuthService {
         ),
     };
   }
+
+  /* =======================================================
+     LOGOUT
+  ======================================================= */
 
   async logout(
     refreshToken:
@@ -339,6 +357,99 @@ export class AuthService {
       });
   }
 
+  /* =======================================================
+     CURRENT USER
+
+     Retorna o contrato seguro usado pelo frontend.
+
+     Não expõe:
+     - sessionId
+     - source
+     - passwordHash
+     - dados internos da sessão
+  ======================================================= */
+
+  async currentUser(
+    auth: AuthContext,
+  ): Promise<AuthenticatedUserView> {
+    const user =
+      await this.database.prisma
+        .user.findFirst({
+          where: {
+            id:
+              auth.userId,
+
+            companyId:
+              auth.companyId,
+
+            status:
+              UserStatus.ACTIVE,
+          },
+
+          select: {
+            id: true,
+
+            companyId:
+              true,
+
+            name: true,
+
+            email: true,
+
+            role: true,
+
+            employee: {
+              select: {
+                id: true,
+
+                active:
+                  true,
+              },
+            },
+          },
+        });
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    if (
+      user.role ===
+        UserRole.EMPLOYEE &&
+      (
+        !user.employee ||
+        !user.employee.active
+      )
+    ) {
+      throw new UnauthorizedException();
+    }
+
+    return {
+      id:
+        user.id,
+
+      companyId:
+        user.companyId,
+
+      employeeId:
+        user.employee?.id ??
+        null,
+
+      name:
+        user.name,
+
+      email:
+        user.email,
+
+      role:
+        user.role,
+    };
+  }
+
+  /* =======================================================
+     CHANGE PASSWORD
+  ======================================================= */
+
   async changePassword(
     auth: AuthContext,
     dto: ChangePasswordDto,
@@ -347,7 +458,8 @@ export class AuthService {
       await this.database.prisma
         .user.findUnique({
           where: {
-            id: auth.userId,
+            id:
+              auth.userId,
           },
         });
 
@@ -386,7 +498,8 @@ export class AuthService {
       await hash(
         dto.newPassword,
         {
-          type: argon2id,
+          type:
+            argon2id,
         },
       );
 
@@ -395,7 +508,8 @@ export class AuthService {
         this.database.prisma
           .user.update({
             where: {
-              id: user.id,
+              id:
+                user.id,
             },
 
             data: {
@@ -421,6 +535,10 @@ export class AuthService {
           }),
       ]);
   }
+
+  /* =======================================================
+     CREATE SESSION
+  ======================================================= */
 
   private async createSession(
     user: SessionUser,
@@ -461,6 +579,7 @@ export class AuthService {
 
     return {
       accessToken,
+
       refreshToken,
 
       csrfToken:
@@ -473,6 +592,10 @@ export class AuthService {
     };
   }
 
+  /* =======================================================
+     ACCESS TOKEN
+  ======================================================= */
+
   private async signAccessToken(
     user: SessionUser,
     sessionId: string,
@@ -484,9 +607,11 @@ export class AuthService {
 
     return this.jwt.signAsync(
       {
-        sub: user.id,
+        sub:
+          user.id,
 
-        sid: sessionId,
+        sid:
+          sessionId,
 
         companyId:
           user.companyId,
@@ -509,6 +634,10 @@ export class AuthService {
     );
   }
 
+  /* =======================================================
+     AUTH RESPONSE
+  ======================================================= */
+
   private buildResponse(
     user: SessionUser,
   ): AuthSessionResponse {
@@ -519,7 +648,8 @@ export class AuthService {
 
     const view:
       AuthenticatedUserView = {
-        id: user.id,
+        id:
+          user.id,
 
         companyId:
           user.companyId,
@@ -539,12 +669,17 @@ export class AuthService {
       };
 
     return {
-      user: view,
+      user:
+        view,
 
       expiresInSeconds:
         env.JWT_ACCESS_TTL_SECONDS,
     };
   }
+
+  /* =======================================================
+     LOGIN INVARIANTS
+  ======================================================= */
 
   private assertUserCanLogin(
     user: SessionUser,
@@ -563,24 +698,42 @@ export class AuthService {
     }
   }
 
+  /* =======================================================
+     TOKENS
+  ======================================================= */
+
   private generateRefreshToken():
     string {
-    return randomBytes(48)
-      .toString('base64url');
+    return randomBytes(
+      48,
+    )
+      .toString(
+        'base64url',
+      );
   }
 
   private generateCsrfToken():
     string {
-    return randomBytes(32)
-      .toString('base64url');
+    return randomBytes(
+      32,
+    )
+      .toString(
+        'base64url',
+      );
   }
 
   private hashRefreshToken(
     token: string,
   ): string {
-    return createHash('sha256')
-      .update(token)
-      .digest('hex');
+    return createHash(
+      'sha256',
+    )
+      .update(
+        token,
+      )
+      .digest(
+        'hex',
+      );
   }
 
   private getRefreshExpiry(
