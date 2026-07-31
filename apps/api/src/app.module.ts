@@ -39,23 +39,58 @@ import {
   DatabaseModule,
 } from './database/database.module';
 
+import {
+  EmployeesModule,
+} from './employees/employees.module';
+
+import {
+  BankFeesModule,
+} from './bank-fees/bank-fees.module';
+
+import {
+  CommissionsModule,
+} from './commissions/commissions.module';
+
+import {
+  AdsModule,
+} from './ads/ads.module';
+
+import {
+  FinancialEngineModule,
+} from './financial-engine/financial-engine.module';
+
+import {
+  UploadsModule,
+} from './uploads/uploads.module';
+
+import {
+  ReceiptsModule,
+} from './receipts/receipts.module';
+
 @Module({
-  imports: [
-    DatabaseModule,
+ imports: [
+  DatabaseModule,
 
-    AuthModule,
+  AuthModule,
 
-    ThrottlerModule.forRoot([
-      {
-        name: 'default',
+  EmployeesModule,
+  BankFeesModule,
+  CommissionsModule,
 
-        ttl: 60_000,
+  FinancialEngineModule,
+  AdsModule,
 
-        limit: 120,
-      },
-    ]),
-  ],
+  UploadsModule,
+  ReceiptsModule,
 
+  ThrottlerModule.forRoot([
+    {
+      name: 'default',
+      ttl: 60_000,
+      limit: 120,
+    },
+  ]),
+],
   controllers: [
     AppController,
   ],
@@ -95,5 +130,7 @@ import {
         CsrfGuard,
     },
   ],
+
+  
 })
 export class AppModule {}

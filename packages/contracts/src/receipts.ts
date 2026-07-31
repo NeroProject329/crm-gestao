@@ -1,32 +1,3 @@
-export type ServiceId =
-  | 'crm-web'
-  | 'crm-api'
-  | 'crm-worker';
-
-export interface HealthResponse {
-  status: 'ok';
-  service: 'crm-api';
-}
-export type {
-  AuthRole,
-  AuthenticatedUserView,
-  AuthSessionResponse,
-} from './auth';
-
-export type {
-  AdminEmployeeView,
-  AdminUserStatus,
-  BankFeePolicyView,
-  EmployeeCommissionPolicyView,
-} from './admin';
-
-export type {
-  AdsEntryView,
-  AdsEntryViewStatus,
-  AdsMutationResponse,
-  RecalculationTriggerStatus,
-} from './ads';
-
 export type ReceiptStatus =
   | 'PENDING'
   | 'APPROVED'

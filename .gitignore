@@ -50,3 +50,5 @@ temp/
 
 # Prisma generated client
 /packages/database/src/generated/prisma/
+# Local test files
+test-files/

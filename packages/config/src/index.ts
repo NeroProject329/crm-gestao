@@ -82,10 +82,48 @@ export const authEnvSchema = z.object({
 
 export const r2EnvSchema = z.object({
   R2_ENDPOINT: z.url(),
-  R2_REGION: z.literal('auto').default('auto'),
-  R2_BUCKET_NAME: z.string().min(1),
-  R2_ACCESS_KEY_ID: z.string().min(1),
-  R2_SECRET_ACCESS_KEY: z.string().min(1),
+
+  R2_REGION: z
+    .string()
+    .min(1)
+    .default('auto'),
+
+  R2_BUCKET_NAME: z
+    .string()
+    .min(1),
+
+  R2_ACCESS_KEY_ID: z
+    .string()
+    .min(1),
+
+  R2_SECRET_ACCESS_KEY: z
+    .string()
+    .min(1),
+
+  R2_UPLOAD_TOKEN_SECRET: z
+    .string()
+    .min(32),
+
+  R2_UPLOAD_URL_TTL_SECONDS: z.coerce
+    .number()
+    .int()
+    .min(60)
+    .max(3600)
+    .default(600),
+
+  R2_DOWNLOAD_URL_TTL_SECONDS: z.coerce
+    .number()
+    .int()
+    .min(30)
+    .max(3600)
+    .default(300),
+
+  R2_MAX_RECEIPT_BYTES: z.coerce
+    .number()
+    .int()
+    .positive()
+    .max(50 * 1024 * 1024)
+    .default(10 * 1024 * 1024),
 });
 
 export const pushcutEnvSchema = z.object({
