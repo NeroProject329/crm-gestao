@@ -21,6 +21,11 @@ import {
   PrismaFinancialRecalculationRepository,
 } from './prisma-financial-recalculation.repository';
 
+import {
+  SettlementReconciliationService,
+  type RecalculationOrigin,
+} from './settlement-reconciliation.service';
+
 @Injectable()
 export class WorkerFinancialRecalculationService {
   private readonly logger =
@@ -34,12 +39,20 @@ export class WorkerFinancialRecalculationService {
 
     private readonly config:
       WorkerConfigService,
+
+    private readonly settlements:
+      SettlementReconciliationService,
   ) {}
 
   async recalculateEmployeeFrom(
-    employeeId: string,
+    employeeId:
+      string,
+
     startDate:
       BusinessDate,
+
+    origin?:
+      RecalculationOrigin,
   ): Promise<
     RecalculationSummary |
     null
@@ -47,22 +60,20 @@ export class WorkerFinancialRecalculationService {
     const startedAt =
       Date.now();
 
+    /*
+     * A reconciliação dos settlements acontece
+     * NA MESMA TRANSAÇÃO e sob o mesmo advisory
+     * lock do recálculo do funcionário.
+     *
+     * Evitamos duas correções concorrentes
+     * reconciliando o mesmo fechamento.
+     */
     const result =
       await this.db.prisma
         .$transaction(
           async (
             transaction,
           ) => {
-            /*
-             * Lock distribuído por employeeId.
-             *
-             * pg_advisory_xact_lock retorna
-             * PostgreSQL void, então usamos
-             * $executeRaw e não $queryRaw.
-             *
-             * O lock permanece até COMMIT
-             * ou ROLLBACK da transação.
-             */
             await transaction
               .$executeRaw`
                 SELECT
@@ -85,13 +96,6 @@ export class WorkerFinancialRecalculationService {
                   employeeId,
                 );
 
-            /*
-             * Uma política pode começar
-             * numa data futura.
-             *
-             * Nesse caso ainda não existe
-             * nada para recalcular.
-             */
             if (
               startDate >
               currentDate
@@ -104,11 +108,29 @@ export class WorkerFinancialRecalculationService {
                 repository,
               );
 
-            return engine
-              .recalculateEmployeeFrom(
+            const summary =
+              await engine
+                .recalculateEmployeeFrom(
+                  employeeId,
+                  startDate,
+                );
+
+            /*
+             * DailyFinancialResult já foi
+             * atualizado acima.
+             *
+             * Agora reconciliamos os fechamentos
+             * usando exatamente esse novo estado.
+             */
+            await this.settlements
+              .reconcileAfterRecalculation(
+                transaction,
                 employeeId,
                 startDate,
+                origin,
               );
+
+            return summary;
           },
 
           {
@@ -130,6 +152,16 @@ export class WorkerFinancialRecalculationService {
         employeeId,
 
         startDate,
+
+        originType:
+          origin
+            ?.type ??
+          null,
+
+        originId:
+          origin
+            ?.id ??
+          null,
 
         durationMs:
           Date.now() -

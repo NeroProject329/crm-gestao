@@ -30,29 +30,81 @@ import {
 } from './outbox-state.service';
 
 interface ClaimedOutboxEvent {
-  id: string;
-  eventType: string;
-  attempts: number;
+  id:
+    string;
+
+  eventType:
+    string;
+
+  attempts:
+    number;
 }
+
+/* =========================================================
+   ASYNC EVENTS
+
+   Eventos encaminhados para BullMQ e processados pelo
+   DomainEventHandler.
+
+   Settlement events são governança de estado:
+   atualmente não recalculam Financial Engine, mas passam
+   pelo consumer para preservar o pipeline de Outbox.
+========================================================= */
 
 const ASYNC_EVENTS =
   new Set<string>([
+    /* =====================================================
+       FINANCIAL POLICIES
+    ===================================================== */
+
     'bank-fee-policy.changed',
+
     'employee-commission-policy.changed',
+
+    /* =====================================================
+       ADS
+    ===================================================== */
+
     'ads.changed',
+
+    /* =====================================================
+       RECEIPTS
+    ===================================================== */
+
     'receipt.submitted',
+
     'receipt.approved',
+
     'receipt.reversed',
+
+    /* =====================================================
+       WEEKLY SETTLEMENTS
+    ===================================================== */
+
+    'settlement.closed',
+
+    'settlement.reviewed',
+
+    'settlement.paid',
   ]);
+
+/* =========================================================
+   KNOWN NO-OP EVENTS
+
+   Eventos conhecidos que não causam efeito assíncrono
+   financeiro.
+
+   São marcados PROCESSED diretamente.
+========================================================= */
 
 const KNOWN_NOOP_EVENTS =
   new Set<string>([
     /*
-     * Blueprint:
      * PENDING / REJECTED / CANCELED
-     * não alteram faturamento.
+     * não alteram faturamento aprovado.
      */
     'receipt.rejected',
+
     'receipt.canceled',
   ]);
 
@@ -88,8 +140,16 @@ export class OutboxDispatcherService
       OutboxStateService,
   ) {}
 
+  /* =======================================================
+     BOOTSTRAP
+  ======================================================= */
+
   onApplicationBootstrap():
     void {
+    /*
+     * Executamos imediatamente uma rodada
+     * quando o Worker inicia.
+     */
     void this.tick();
 
     this.timer =
@@ -97,10 +157,15 @@ export class OutboxDispatcherService
         () => {
           void this.tick();
         },
+
         this.config
           .outboxPollMs,
       );
   }
+
+  /* =======================================================
+     SHUTDOWN
+  ======================================================= */
 
   onApplicationShutdown():
     void {
@@ -111,13 +176,24 @@ export class OutboxDispatcherService
     }
   }
 
+  /* =======================================================
+     TICK
+
+     Impede polling concorrente dentro da mesma
+     instância do Worker.
+
+     Concorrência entre múltiplas instâncias é protegida
+     pelo SELECT ... FOR UPDATE SKIP LOCKED.
+  ======================================================= */
+
   private async tick():
     Promise<void> {
     if (this.running) {
       return;
     }
 
-    this.running = true;
+    this.running =
+      true;
 
     try {
       await this
@@ -135,7 +211,9 @@ export class OutboxDispatcherService
           event,
         );
       }
-    } catch (error) {
+    } catch (
+      error
+    ) {
       this.logger.error(
         JSON.stringify({
           event:
@@ -148,9 +226,17 @@ export class OutboxDispatcherService
         }),
       );
     } finally {
-      this.running = false;
+      this.running =
+        false;
     }
   }
+
+  /* =======================================================
+     CLAIM EVENTS
+
+     PostgreSQL é responsável por garantir que múltiplos
+     Workers não reivindiquem o mesmo evento simultaneamente.
+  ======================================================= */
 
   private async claimEvents():
     Promise<
@@ -212,12 +298,16 @@ export class OutboxDispatcherService
         SET
           "status" =
             'PROCESSING'::"outbox_event_status",
+
           "attempts" =
             event."attempts" + 1,
+
           "processed_at" =
             NULL,
+
           "last_error" =
             NULL,
+
           "updated_at" =
             NOW()
         FROM
@@ -227,16 +317,29 @@ export class OutboxDispatcherService
             candidates."id"
         RETURNING
           event."id" AS "id",
+
           event."event_type" AS "eventType",
+
           event."attempts" AS "attempts"
       `;
   }
+
+  /* =======================================================
+     DISPATCH
+  ======================================================= */
 
   private async dispatch(
     event:
       ClaimedOutboxEvent,
   ): Promise<void> {
     try {
+      /* ===================================================
+         KNOWN NO-OP
+
+         Evento válido que propositalmente não possui
+         processamento assíncrono.
+      =================================================== */
+
       if (
         KNOWN_NOOP_EVENTS.has(
           event.eventType,
@@ -247,8 +350,30 @@ export class OutboxDispatcherService
             event.id,
           );
 
+        this.logger.log(
+          JSON.stringify({
+            event:
+              'outbox.noop.processed',
+
+            outboxEventId:
+              event.id,
+
+            eventType:
+              event.eventType,
+          }),
+        );
+
         return;
       }
+
+      /* ===================================================
+         UNKNOWN EVENT
+
+         Falha permanente.
+
+         Isso evita aceitar silenciosamente um novo
+         eventType sem consumer correspondente.
+      =================================================== */
 
       if (
         !ASYNC_EVENTS.has(
@@ -280,14 +405,18 @@ export class OutboxDispatcherService
         return;
       }
 
-      /*
-       * IMPORTANTE:
-       *
-       * Não marcamos PROCESSED aqui.
-       *
-       * PROCESSING permanece até o
-       * consumer terminar o efeito.
-       */
+      /* ===================================================
+         ASYNC EVENT
+
+         Não marcamos PROCESSED aqui.
+
+         O OutboxEvent continua PROCESSING até o
+         DomainEventWorker concluir o efeito.
+
+         Só então OutboxStateService.markProcessed()
+         é chamado pelo consumer.
+      =================================================== */
+
       await this.queues
         .ensureOutboxJob(
           event.id,
@@ -308,7 +437,14 @@ export class OutboxDispatcherService
             event.attempts,
         }),
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
+      /*
+       * Falha ao colocar/processar o evento no pipeline.
+       *
+       * Mantemos retry com backoff.
+       */
       await this.state
         .markRetryableFailure(
           event.id,
@@ -337,6 +473,21 @@ export class OutboxDispatcherService
       );
     }
   }
+
+  /* =======================================================
+     EXHAUSTED PROCESSING LEASES
+
+     Evento pode ficar PROCESSING caso:
+
+       Worker seja encerrado
+       conexão caia
+       processo morra
+       deploy ocorra durante job
+
+     Depois do lease ele pode ser recuperado.
+
+     Se já atingiu maxAttempts, marcamos FAILED.
+  ======================================================= */
 
   private async markExhaustedStaleEvents():
     Promise<void> {

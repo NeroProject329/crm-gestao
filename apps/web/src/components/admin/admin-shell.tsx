@@ -21,6 +21,7 @@ import {
   LogOut,
   Orbit,
   ShieldCheck,
+  WalletCards,
 } from 'lucide-react';
 
 import type {
@@ -59,6 +60,17 @@ const navigation = [
     icon:
       FileCheck2,
   },
+
+  {
+  href:
+    '/admin/pagamentos',
+
+  label:
+    'Pagamentos',
+
+  icon:
+    WalletCards,
+},
 ] as const;
 
 function titleForPath(
@@ -84,6 +96,21 @@ function titleForPath(
         'Comprovantes',
     };
   }
+
+
+  if (
+  pathname.startsWith(
+    '/admin/pagamentos',
+  )
+) {
+  return {
+    eyebrow:
+      'Fechamento semanal',
+
+    title:
+      'Pagamentos',
+  };
+}
 
   return {
     eyebrow:

@@ -58,6 +58,10 @@ import {
   MaintenanceWorker,
 } from './maintenance/maintenance.worker';
 
+import {
+  SettlementReconciliationService,
+} from './financial/settlement-reconciliation.service';
+
 @Module({
   providers: [
     WorkerConfigService,
@@ -67,6 +71,8 @@ import {
     QueuesService,
 
     OutboxStateService,
+
+    SettlementReconciliationService,
 
     WorkerFinancialRecalculationService,
 

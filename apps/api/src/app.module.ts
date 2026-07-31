@@ -71,6 +71,10 @@ import {
   UploadsModule,
 } from './uploads/uploads.module';
 
+import {
+  SettlementsModule,
+} from './settlements/settlements.module';
+
 @Module({
   imports: [
     DatabaseModule,
@@ -88,6 +92,7 @@ import {
 
     DashboardModule,
     RankingModule,
+    SettlementsModule,
 
     ThrottlerModule.forRoot([
       {

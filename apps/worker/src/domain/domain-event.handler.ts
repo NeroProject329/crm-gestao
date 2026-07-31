@@ -27,6 +27,10 @@ import {
   WorkerFinancialRecalculationService,
 } from '../financial/worker-financial-recalculation.service';
 
+import type {
+  RecalculationOrigin,
+} from '../financial/settlement-reconciliation.service';
+
 @Injectable()
 export class DomainEventHandler {
   constructor(
@@ -41,7 +45,8 @@ export class DomainEventHandler {
   ) {}
 
   async handle(
-    outboxEventId: string,
+    outboxEventId:
+      string,
   ): Promise<void> {
     const event =
       await this.db.prisma
@@ -66,12 +71,36 @@ export class DomainEventHandler {
       return;
     }
 
+    /*
+     * Origem do recálculo.
+     *
+     * É propagada até a reconciliação
+     * dos WeeklySettlement para que
+     * FinancialAdjustment consiga manter
+     * rastreabilidade até o OutboxEvent
+     * que originou a mudança histórica.
+     */
+    const origin:
+      RecalculationOrigin = {
+        type:
+          event.eventType,
+
+        id:
+          event.id,
+      };
+
     switch (
       event.eventType
     ) {
+      /* ===================================================
+         RECEIPT SUBMITTED
+
+         Não afeta a verdade financeira ainda.
+         Apenas notificação.
+      =================================================== */
+
       case 'receipt.submitted':
-        await this
-          .notifications
+        await this.notifications
           .handleReceiptSubmitted({
             id:
               event.id,
@@ -85,15 +114,24 @@ export class DomainEventHandler {
 
         return;
 
+      /* ===================================================
+         RECEIPT FINANCIAL EVENTS
+      =================================================== */
+
       case 'receipt.approved':
       case 'receipt.reversed':
         await this
           .handleReceiptFinancialEvent(
             event.companyId,
             event.aggregateId,
+            origin,
           );
 
         return;
+
+      /* ===================================================
+         ADS
+      =================================================== */
 
       case 'ads.changed':
         await this
@@ -101,30 +139,63 @@ export class DomainEventHandler {
             event.companyId,
             event.aggregateId,
             event.payload,
+            origin,
           );
 
         return;
+
+      /* ===================================================
+         COMMISSION POLICY
+      =================================================== */
 
       case 'employee-commission-policy.changed':
         await this
           .handleCommissionEvent(
             event.companyId,
             event.payload,
+            origin,
           );
 
         return;
+
+      /* ===================================================
+         BANK FEE POLICY
+      =================================================== */
 
       case 'bank-fee-policy.changed':
         await this
           .handleBankFeeEvent(
             event.companyId,
             event.payload,
+            origin,
           );
 
         return;
 
+      /* ===================================================
+         NON FINANCIAL RECEIPT EVENTS
+      =================================================== */
+
       case 'receipt.rejected':
       case 'receipt.canceled':
+        return;
+
+      /* ===================================================
+         SETTLEMENT GOVERNANCE EVENTS
+
+         O estado já foi persistido pela API
+         dentro da transação que criou o OutboxEvent.
+
+         Eles NÃO executam novamente o
+         Financial Engine.
+
+         O Worker apenas considera o evento
+         processado com sucesso.
+      =================================================== */
+
+      case 'settlement.closed':
+      case 'settlement.reviewed':
+      case 'settlement.paid':
         return;
 
       default:
@@ -134,9 +205,19 @@ export class DomainEventHandler {
     }
   }
 
+  /* =======================================================
+     RECEIPT FINANCIAL EVENT
+  ======================================================= */
+
   private async handleReceiptFinancialEvent(
-    companyId: string,
-    receiptId: string,
+    companyId:
+      string,
+
+    receiptId:
+      string,
+
+    origin:
+      RecalculationOrigin,
   ): Promise<void> {
     const receipt =
       await this.db.prisma
@@ -169,16 +250,29 @@ export class DomainEventHandler {
         receipt.employeeId,
 
         toBusinessDate(
-          receipt
-            .businessDate,
+          receipt.businessDate,
         ),
+
+        origin,
       );
   }
 
+  /* =======================================================
+     ADS EVENT
+  ======================================================= */
+
   private async handleAdsEvent(
-    companyId: string,
-    adsEntryId: string,
-    payload: unknown,
+    companyId:
+      string,
+
+    adsEntryId:
+      string,
+
+    payload:
+      unknown,
+
+    origin:
+      RecalculationOrigin,
   ): Promise<void> {
     const entry =
       await this.db.prisma
@@ -213,12 +307,23 @@ export class DomainEventHandler {
       .recalculateEmployeeFrom(
         entry.employeeId,
         effectiveFrom,
+        origin,
       );
   }
 
+  /* =======================================================
+     COMMISSION EVENT
+  ======================================================= */
+
   private async handleCommissionEvent(
-    companyId: string,
-    payload: unknown,
+    companyId:
+      string,
+
+    payload:
+      unknown,
+
+    origin:
+      RecalculationOrigin,
   ): Promise<void> {
     const employeeId =
       this.requirePayloadString(
@@ -242,12 +347,23 @@ export class DomainEventHandler {
       .recalculateEmployeeFrom(
         employeeId,
         effectiveFrom,
+        origin,
       );
   }
 
+  /* =======================================================
+     BANK FEE EVENT
+  ======================================================= */
+
   private async handleBankFeeEvent(
-    companyId: string,
-    payload: unknown,
+    companyId:
+      string,
+
+    payload:
+      unknown,
+
+    origin:
+      RecalculationOrigin,
   ): Promise<void> {
     const effectiveFrom =
       this.requirePayloadBusinessDate(
@@ -258,9 +374,9 @@ export class DomainEventHandler {
     /*
      * Inclusive funcionários inativos.
      *
-     * Alteração histórica precisa manter
-     * os resultados históricos deles
-     * consistentes também.
+     * Alteração histórica da taxa bancária
+     * precisa preservar consistência histórica
+     * de todos que tenham resultados afetados.
      */
     const employees =
       await this.db.prisma
@@ -291,13 +407,21 @@ export class DomainEventHandler {
         .recalculateEmployeeFrom(
           employee.id,
           effectiveFrom,
+          origin,
         );
     }
   }
 
+  /* =======================================================
+     EMPLOYEE OWNERSHIP
+  ======================================================= */
+
   private async assertEmployeeCompany(
-    companyId: string,
-    employeeId: string,
+    companyId:
+      string,
+
+    employeeId:
+      string,
   ): Promise<void> {
     const employee =
       await this.db.prisma
@@ -325,9 +449,16 @@ export class DomainEventHandler {
     }
   }
 
+  /* =======================================================
+     PAYLOAD HELPERS
+  ======================================================= */
+
   private requirePayloadBusinessDate(
-    payload: unknown,
-    key: string,
+    payload:
+      unknown,
+
+    key:
+      string,
   ): BusinessDate {
     return requireBusinessDate(
       this.requirePayloadString(
@@ -338,8 +469,11 @@ export class DomainEventHandler {
   }
 
   private requirePayloadString(
-    payload: unknown,
-    key: string,
+    payload:
+      unknown,
+
+    key:
+      string,
   ): string {
     if (
       !payload ||
@@ -356,17 +490,17 @@ export class DomainEventHandler {
 
     const value =
       (
-        payload as
-          Record<
-            string,
-            unknown
-          >
+        payload as Record<
+          string,
+          unknown
+        >
       )[key];
 
     if (
       typeof value !==
         'string' ||
-      value.trim()
+      value
+        .trim()
         .length ===
         0
     ) {

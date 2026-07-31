@@ -6089,3 +6089,959 @@ tr:last-child td {
       auto;
   }
 }
+
+
+/* =========================================================
+   STAGE 11 — WEEKLY SETTLEMENTS
+========================================================= */
+
+.settlements-page,
+.employee-payments-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* =========================================================
+   ADMIN HERO
+========================================================= */
+
+.settlements-hero,
+.employee-payment-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+
+  padding: 30px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+
+  background:
+    radial-gradient(
+      circle at 88% 15%,
+      rgba(18, 107, 255, 0.17),
+      transparent 34%
+    ),
+    #fff;
+
+  box-shadow: var(--shadow-card);
+}
+
+.settlements-hero h1,
+.employee-payment-hero h1 {
+  max-width: 650px;
+
+  margin: 0;
+
+  color: var(--foreground);
+
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: 0.98;
+
+  letter-spacing: -0.045em;
+}
+
+.settlements-hero p,
+.employee-payment-hero p {
+  max-width: 620px;
+
+  margin: 15px 0 0;
+
+  color: var(--muted);
+
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.settlement-period-card,
+.employee-payment-period {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 16px;
+
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  background: rgba(255,255,255,0.9);
+}
+
+.settlement-period-card svg,
+.employee-payment-period svg {
+  color: var(--blue);
+}
+
+.settlement-period-card span,
+.settlement-period-card strong {
+  display: block;
+}
+
+.settlement-period-card span {
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.settlement-period-card strong {
+  margin-top: 3px;
+
+  color: var(--foreground);
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.settlement-summary-grid,
+.employee-payment-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+.settlement-summary-grid article,
+.employee-payment-summary article {
+  position: relative;
+
+  padding: 20px;
+
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+  border-radius: 16px;
+
+  background: #fff;
+
+  box-shadow:
+    0 9px 26px
+    rgba(7,17,31,0.035);
+}
+
+.settlement-summary-grid svg,
+.employee-payment-summary svg {
+  margin-bottom: 15px;
+
+  color: var(--blue);
+}
+
+.settlement-summary-grid span,
+.employee-payment-summary span {
+  display: block;
+
+  color: var(--muted);
+
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.settlement-summary-grid strong,
+.employee-payment-summary strong {
+  display: block;
+
+  margin-top: 5px;
+
+  color: var(--foreground);
+
+  font-size: 19px;
+
+  letter-spacing: -0.03em;
+}
+
+/* =========================================================
+   ADMIN PANEL
+========================================================= */
+
+.settlements-panel,
+.employee-payment-history-panel {
+  padding: 22px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+
+  background: #fff;
+
+  box-shadow: var(--shadow-card);
+}
+
+.settlements-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 20px;
+}
+
+.settlement-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.settlement-filter {
+  min-height: 35px;
+
+  padding: 0 12px;
+
+  border: 1px solid transparent;
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: var(--muted);
+
+  font: inherit;
+  font-size: 9px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.settlement-filter.active {
+  border-color: var(--foreground);
+
+  background: var(--foreground);
+
+  color: #fff;
+}
+
+.settlements-toolbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.settlement-search {
+  display: flex;
+  align-items: center;
+
+  width: 240px;
+  min-height: 39px;
+
+  gap: 8px;
+
+  padding: 0 11px;
+
+  border: 1px solid var(--border);
+  border-radius: 11px;
+}
+
+.settlement-search svg {
+  color: var(--muted);
+}
+
+.settlement-search input {
+  width: 100%;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  font: inherit;
+  font-size: 9px;
+}
+
+.settlement-sync-button,
+.settlement-details-button,
+.settlement-action-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 39px;
+
+  gap: 7px;
+
+  padding: 0 12px;
+
+  border-radius: 11px;
+
+  font: inherit;
+  font-size: 9px;
+  font-weight: 850;
+
+  cursor: pointer;
+}
+
+.settlement-sync-button,
+.settlement-details-button {
+  border: 1px solid var(--border);
+
+  background: #fff;
+
+  color: var(--foreground);
+}
+
+.settlement-action-primary {
+  border: 1px solid var(--blue);
+
+  background: var(--blue);
+
+  color: #fff;
+}
+
+/* =========================================================
+   SETTLEMENT CARD
+========================================================= */
+
+.settlements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.settlement-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+
+  overflow: hidden;
+
+  background: #fff;
+}
+
+.settlement-card-main {
+  display: grid;
+
+  grid-template-columns:
+    minmax(210px, 1.3fr)
+    minmax(170px, 1fr)
+    minmax(130px, 0.7fr)
+    auto;
+
+  align-items: center;
+  gap: 14px;
+
+  padding: 17px;
+}
+
+.settlement-person {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.settlement-avatar {
+  display: grid;
+  place-items: center;
+
+  width: 36px;
+  height: 36px;
+
+  flex: 0 0 auto;
+
+  border-radius: 11px;
+
+  background: var(--foreground);
+
+  color: #fff;
+
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.settlement-person strong,
+.settlement-person span,
+.settlement-period span,
+.settlement-period strong,
+.settlement-primary-money span,
+.settlement-primary-money strong {
+  display: block;
+}
+
+.settlement-person strong,
+.settlement-period strong {
+  color: var(--foreground);
+
+  font-size: 10px;
+}
+
+.settlement-person span,
+.settlement-period span,
+.settlement-primary-money span {
+  margin-top: 3px;
+
+  color: var(--muted);
+
+  font-size: 8px;
+}
+
+.settlement-primary-money strong {
+  margin-top: 3px;
+
+  color: var(--foreground);
+
+  font-size: 15px;
+}
+
+.settlement-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+
+  min-height: 26px;
+
+  padding: 0 9px;
+
+  border-radius: 999px;
+
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.settlement-status.open {
+  background: #eaf3ff;
+
+  color: #126bff;
+}
+
+.settlement-status.closed {
+  background: #f1f3f6;
+
+  color: #344054;
+}
+
+.settlement-status.review_required {
+  background: #fff3e4;
+
+  color: #9a5800;
+}
+
+.settlement-status.paid {
+  background: #ecfdf3;
+
+  color: #067647;
+}
+
+.settlement-metrics {
+  display: grid;
+
+  grid-template-columns:
+    repeat(6, minmax(0, 1fr));
+
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.settlement-metrics > div {
+  padding: 13px 16px;
+
+  border-right: 1px solid var(--border);
+}
+
+.settlement-metrics > div:last-child {
+  border-right: 0;
+}
+
+.settlement-metrics span {
+  display: block;
+
+  color: var(--muted);
+
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.settlement-metrics strong {
+  display: block;
+
+  margin-top: 4px;
+
+  color: var(--foreground);
+
+  font-size: 10px;
+}
+
+.settlement-review-warning,
+.employee-payment-warning {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  padding: 13px 16px;
+
+  background: #fff8ed;
+
+  color: #7a4300;
+}
+
+.settlement-review-warning strong,
+.settlement-review-warning span,
+.employee-payment-warning strong,
+.employee-payment-warning span {
+  display: block;
+}
+
+.settlement-review-warning strong,
+.employee-payment-warning strong {
+  font-size: 9px;
+}
+
+.settlement-review-warning span,
+.employee-payment-warning span {
+  margin-top: 3px;
+
+  font-size: 8px;
+  line-height: 1.45;
+}
+
+.settlement-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+
+  padding: 12px 16px;
+}
+
+/* =========================================================
+   ADJUSTMENTS
+========================================================= */
+
+.settlement-adjustments {
+  padding: 16px;
+
+  border-top: 1px solid var(--border);
+
+  background: #fafcff;
+}
+
+.settlement-adjustments-heading strong,
+.settlement-adjustments-heading span {
+  display: block;
+}
+
+.settlement-adjustments-heading strong {
+  font-size: 10px;
+}
+
+.settlement-adjustments-heading span {
+  margin-top: 3px;
+
+  color: var(--muted);
+
+  font-size: 8px;
+}
+
+.settlement-adjustment-empty {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 18px 0 2px;
+
+  color: var(--muted);
+
+  font-size: 9px;
+}
+
+.settlement-adjustment-row {
+  display: grid;
+
+  grid-template-columns:
+    75px 105px 1fr auto;
+
+  align-items: center;
+  gap: 10px;
+
+  margin-top: 12px;
+
+  padding: 11px;
+
+  border: 1px solid var(--border);
+  border-radius: 11px;
+
+  background: #fff;
+
+  font-size: 9px;
+}
+
+.adjustment-type {
+  display: inline-flex;
+  justify-content: center;
+
+  padding: 5px 8px;
+
+  border-radius: 999px;
+
+  font-size: 7px;
+  font-weight: 900;
+}
+
+.adjustment-type.credit {
+  background: #ecfdf3;
+
+  color: #067647;
+}
+
+.adjustment-type.debit {
+  background: #fff0f0;
+
+  color: #b42318;
+}
+
+.settlement-adjustment-row small {
+  color: var(--muted);
+
+  font-size: 7px;
+}
+
+/* =========================================================
+   EMPLOYEE CURRENT
+========================================================= */
+
+.employee-payment-hero {
+  align-items: center;
+}
+
+.employee-payment-main-value {
+  min-width: 230px;
+
+  padding: 20px;
+
+  border: 1px solid var(--border);
+  border-radius: 16px;
+
+  background: rgba(255,255,255,0.94);
+}
+
+.employee-payment-main-value > span:first-child {
+  display: block;
+
+  color: var(--muted);
+
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.employee-payment-main-value > strong {
+  display: block;
+
+  margin: 5px 0 11px;
+
+  color: var(--foreground);
+
+  font-size: 29px;
+
+  letter-spacing: -0.045em;
+}
+
+.employee-payment-period {
+  width: fit-content;
+
+  margin-top: 17px;
+
+  color: var(--foreground);
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   EMPLOYEE HISTORY
+========================================================= */
+
+.employee-payment-history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 18px;
+}
+
+.employee-payment-history-heading h2 {
+  margin: 0;
+
+  font-size: 20px;
+
+  letter-spacing: -0.03em;
+}
+
+.employee-payment-history-heading > span {
+  color: var(--muted);
+
+  font-size: 8px;
+}
+
+.employee-payment-history-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+.employee-payment-history-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  overflow: hidden;
+}
+
+.employee-payment-history-main {
+  display: grid;
+
+  grid-template-columns:
+    1.4fr 0.8fr auto auto;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 15px;
+}
+
+.employee-payment-history-main > div > span,
+.employee-payment-history-main > div > strong {
+  display: block;
+}
+
+.employee-payment-history-main > div > span {
+  color: var(--muted);
+
+  font-size: 8px;
+}
+
+.employee-payment-history-main > div > strong {
+  margin-top: 4px;
+
+  font-size: 10px;
+}
+
+.employee-payment-history-main > button {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 8px 10px;
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+
+  background: #fff;
+
+  font: inherit;
+  font-size: 8px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.employee-payment-paid-at {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 10px 15px;
+
+  border-top: 1px solid var(--border);
+
+  color: #067647;
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.employee-payment-details {
+  padding: 15px;
+
+  border-top: 1px solid var(--border);
+
+  background: #fafcff;
+}
+
+.employee-payment-detail-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, minmax(0, 1fr));
+
+  gap: 8px;
+}
+
+.employee-payment-detail-grid > div {
+  padding: 11px;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  background: #fff;
+}
+
+.employee-payment-detail-grid span,
+.employee-payment-detail-grid strong {
+  display: block;
+}
+
+.employee-payment-detail-grid span {
+  color: var(--muted);
+
+  font-size: 7px;
+}
+
+.employee-payment-detail-grid strong {
+  margin-top: 4px;
+
+  font-size: 9px;
+}
+
+.employee-adjustments {
+  margin-top: 15px;
+}
+
+.employee-adjustments > strong {
+  font-size: 9px;
+}
+
+.employee-adjustment-row {
+  display: grid;
+
+  grid-template-columns:
+    70px 100px 1fr;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 8px;
+
+  padding: 10px;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  background: #fff;
+
+  font-size: 8px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+  .settlement-summary-grid,
+  .employee-payment-summary {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .settlement-metrics {
+    grid-template-columns:
+      repeat(3, 1fr);
+  }
+
+  .settlement-metrics > div:nth-child(3) {
+    border-right: 0;
+  }
+
+  .settlement-card-main {
+    grid-template-columns:
+      1fr 1fr;
+  }
+}
+
+@media (max-width: 800px) {
+  .settlements-hero,
+  .employee-payment-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .settlement-period-card,
+  .employee-payment-main-value {
+    width: 100%;
+  }
+
+  .settlements-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .settlements-toolbar-actions {
+    width: 100%;
+  }
+
+  .settlement-search {
+    flex: 1;
+    width: auto;
+  }
+
+  .settlement-adjustment-row {
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .employee-payment-history-main {
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .employee-payment-detail-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 540px) {
+  .settlements-hero,
+  .employee-payment-hero {
+    padding: 21px;
+  }
+
+  .settlement-summary-grid,
+  .employee-payment-summary {
+    grid-template-columns:
+      1fr;
+  }
+
+  .settlements-toolbar-actions {
+    flex-direction: column;
+  }
+
+  .settlement-search {
+    width: 100%;
+  }
+
+  .settlement-card-main,
+  .employee-payment-history-main {
+    grid-template-columns:
+      1fr;
+  }
+
+  .settlement-metrics {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .settlement-metrics > div {
+    border-right: 0;
+  }
+
+  .settlement-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .settlement-adjustment-row,
+  .employee-adjustment-row,
+  .employee-payment-detail-grid {
+    grid-template-columns:
+      1fr;
+  }
+}
