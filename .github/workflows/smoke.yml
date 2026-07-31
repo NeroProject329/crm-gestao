@@ -1,0 +1,38 @@
+name: Post-deploy Smoke
+
+on:
+  deployment_status:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Deployment Smoke
+
+    if: >-
+      (github.event_name == 'workflow_dispatch' ||
+      github.event.deployment_status.state == 'success') &&
+      vars.SMOKE_API_BASE_URL != '' &&
+      vars.SMOKE_WEB_BASE_URL != ''
+
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 5
+
+    env:
+      SMOKE_API_BASE_URL: ${{ vars.SMOKE_API_BASE_URL }}
+      SMOKE_WEB_BASE_URL: ${{ vars.SMOKE_WEB_BASE_URL }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Configure Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24.18.0
+
+      - name: Check API and Web
+        run: node scripts/smoke.mjs
