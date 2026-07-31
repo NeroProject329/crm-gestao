@@ -12,6 +12,10 @@ import {
 } from '@nestjs/throttler';
 
 import {
+  AdsModule,
+} from './ads/ads.module';
+
+import {
   AppController,
 } from './app.controller';
 
@@ -36,14 +40,6 @@ import {
 } from './auth/roles.guard';
 
 import {
-  DatabaseModule,
-} from './database/database.module';
-
-import {
-  EmployeesModule,
-} from './employees/employees.module';
-
-import {
   BankFeesModule,
 } from './bank-fees/bank-fees.module';
 
@@ -52,47 +48,61 @@ import {
 } from './commissions/commissions.module';
 
 import {
-  AdsModule,
-} from './ads/ads.module';
-
+  DashboardModule,
+} from './dashboard/dashboard.module';
 
 import {
-  UploadsModule,
-} from './uploads/uploads.module';
+  DatabaseModule,
+} from './database/database.module';
+
+import {
+  EmployeesModule,
+} from './employees/employees.module';
+
+import {
+  RankingModule,
+} from './ranking/ranking.module';
 
 import {
   ReceiptsModule,
 } from './receipts/receipts.module';
 
 import {
-  DashboardModule,
-} from './dashboard/dashboard.module';
+  UploadsModule,
+} from './uploads/uploads.module';
 
 @Module({
- imports: [
-  DatabaseModule,
+  imports: [
+    DatabaseModule,
 
-  AuthModule,
+    AuthModule,
 
-  EmployeesModule,
-  BankFeesModule,
-  CommissionsModule,
+    EmployeesModule,
+    BankFeesModule,
+    CommissionsModule,
 
+    AdsModule,
 
-  AdsModule,
+    UploadsModule,
+    ReceiptsModule,
 
-  UploadsModule,
-  ReceiptsModule,
-  DashboardModule,
+    DashboardModule,
+    RankingModule,
 
-  ThrottlerModule.forRoot([
-    {
-      name: 'default',
-      ttl: 60_000,
-      limit: 120,
-    },
-  ]),
-],
+    ThrottlerModule.forRoot([
+      {
+        name:
+          'default',
+
+        ttl:
+          60_000,
+
+        limit:
+          120,
+      },
+    ]),
+  ],
+
   controllers: [
     AppController,
   ],
@@ -132,7 +142,5 @@ import {
         CsrfGuard,
     },
   ],
-
-  
 })
 export class AppModule {}

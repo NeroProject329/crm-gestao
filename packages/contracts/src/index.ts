@@ -122,6 +122,8 @@ export interface AdminReceiptActionResponse {
 }
 
 export type {
+  DashboardPreset,
+
   EmployeeDashboardPreset,
   EmployeeFinancialStatus,
   EmployeeDashboardPeriodView,
@@ -129,4 +131,11 @@ export type {
   EmployeeFinancialSummaryView,
   EmployeeFinancialDayView,
   EmployeeDashboardView,
+
+  AdminFinancialSummaryView,
+  AdminFinancialDayView,
+  AdminEmployeeFinancialView,
+  AdminRankingItemView,
+  AdminDashboardView,
+  AdminRankingView,
 } from './dashboard';

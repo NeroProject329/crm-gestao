@@ -95,20 +95,31 @@ export function LoginForm() {
           },
         );
 
-      if (
-        session.user.role ===
-        'EMPLOYEE'
-      ) {
-        router.replace(
-          '/app/dashboard',
+        if (
+          session.user.role ===
+          'ADMIN'
+        ) {
+          router.replace(
+            '/admin/dashboard',
+          );
+
+          return;
+        }
+
+        if (
+          session.user.role ===
+          'EMPLOYEE'
+        ) {
+          router.replace(
+            '/app/dashboard',
+          );
+
+          return;
+        }
+
+        setError(
+          'Perfil de acesso inválido.',
         );
-
-        return;
-      }
-
-      setError(
-        'A área administrativa será ativada na Etapa 10.',
-      );
     } catch (
       currentError
     ) {
