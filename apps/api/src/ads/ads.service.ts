@@ -27,9 +27,6 @@ import {
   parseBusinessDate,
 } from '../common/business-date';
 
-import {
-  FinancialRecalculationService,
-} from '../financial-engine/financial-recalculation.service';
 
 import type {
   CreateAdsEntryDto,
@@ -48,9 +45,6 @@ export class AdsService {
   constructor(
     private readonly database:
       DatabaseService,
-
-    private readonly recalculation:
-      FinancialRecalculationService,
   ) {}
 
   async list(
@@ -248,12 +242,6 @@ export class AdsService {
           },
         );
 
-    const recalculated =
-      await this.recalculation
-        .tryRecalculateEmployeeFrom(
-          entry.employeeId,
-          dto.businessDate,
-        );
 
     return {
       adsEntry:
@@ -261,9 +249,7 @@ export class AdsService {
 
       recalculation: {
         status:
-          recalculated
-            ? 'COMPLETED'
-            : 'PENDING',
+          'PENDING',
 
         effectiveFrom:
           dto.businessDate,
@@ -438,12 +424,6 @@ export class AdsService {
           },
         );
 
-    const recalculated =
-      await this.recalculation
-        .tryRecalculateEmployeeFrom(
-          updated.employeeId,
-          effectiveFrom,
-        );
 
     return {
       adsEntry:
@@ -451,9 +431,7 @@ export class AdsService {
 
       recalculation: {
         status:
-          recalculated
-            ? 'COMPLETED'
-            : 'PENDING',
+          'PENDING',
 
         effectiveFrom,
       },
@@ -485,7 +463,7 @@ export class AdsService {
 
         recalculation: {
           status:
-            'COMPLETED',
+            'PENDING',
 
           effectiveFrom,
         },
@@ -584,12 +562,6 @@ export class AdsService {
           },
         );
 
-    const recalculated =
-      await this.recalculation
-        .tryRecalculateEmployeeFrom(
-          canceled.employeeId,
-          effectiveFrom,
-        );
 
     return {
       adsEntry:
@@ -597,9 +569,7 @@ export class AdsService {
 
       recalculation: {
         status:
-          recalculated
-            ? 'COMPLETED'
-            : 'PENDING',
+          'PENDING',
 
         effectiveFrom,
       },

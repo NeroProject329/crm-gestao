@@ -55,9 +55,6 @@ import {
   AdsModule,
 } from './ads/ads.module';
 
-import {
-  FinancialEngineModule,
-} from './financial-engine/financial-engine.module';
 
 import {
   UploadsModule,
@@ -77,7 +74,7 @@ import {
   BankFeesModule,
   CommissionsModule,
 
-  FinancialEngineModule,
+
   AdsModule,
 
   UploadsModule,

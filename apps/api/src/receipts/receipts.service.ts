@@ -30,9 +30,6 @@ import {
   DatabaseService,
 } from '../database/database.service';
 
-import {
-  FinancialRecalculationService,
-} from '../financial-engine/financial-recalculation.service';
 
 import {
   ReceiptStorageService,
@@ -70,9 +67,6 @@ export class ReceiptsService {
 
     private readonly storage:
       ReceiptStorageService,
-
-    private readonly recalculation:
-      FinancialRecalculationService,
   ) {}
 
   async submit(
@@ -740,12 +734,6 @@ export class ReceiptsService {
         updated.businessDate,
       );
 
-    const recalculated =
-      await this.recalculation
-        .tryRecalculateEmployeeFrom(
-          updated.employeeId,
-          effectiveFrom,
-        );
 
     return {
       receipt:
@@ -755,9 +743,7 @@ export class ReceiptsService {
 
       recalculation: {
         status:
-          recalculated
-            ? 'COMPLETED'
-            : 'PENDING',
+          'PENDING',
 
         effectiveFrom,
       },
@@ -1083,12 +1069,6 @@ export class ReceiptsService {
         updated.businessDate,
       );
 
-    const recalculated =
-      await this.recalculation
-        .tryRecalculateEmployeeFrom(
-          updated.employeeId,
-          effectiveFrom,
-        );
 
     return {
       receipt:
@@ -1098,9 +1078,7 @@ export class ReceiptsService {
 
       recalculation: {
         status:
-          recalculated
-            ? 'COMPLETED'
-            : 'PENDING',
+          'PENDING',
 
         effectiveFrom,
       },

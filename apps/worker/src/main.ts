@@ -1,18 +1,78 @@
-import { parseWorkerBootstrapEnv } from '@crm/config';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { AppService } from './app.service';
+import {
+  existsSync,
+} from 'node:fs';
 
-async function bootstrap(): Promise<void> {
-  parseWorkerBootstrapEnv(process.env);
+import {
+  resolve,
+} from 'node:path';
 
-  const app = await NestFactory.createApplicationContext(AppModule);
+import {
+  loadEnvFile,
+} from 'node:process';
+
+import {
+  NestFactory,
+} from '@nestjs/core';
+
+import {
+  parseWorkerBootstrapEnv,
+} from '@crm/config';
+
+import {
+  AppModule,
+} from './app.module';
+
+async function bootstrap():
+  Promise<void> {
+  const rootEnv =
+    resolve(
+      process.cwd(),
+      '../../.env',
+    );
+
+  if (
+    existsSync(
+      rootEnv,
+    )
+  ) {
+    loadEnvFile(
+      rootEnv,
+    );
+  }
+
+  const env =
+    parseWorkerBootstrapEnv(
+      process.env,
+    );
+
+  const app =
+    await NestFactory
+      .createApplicationContext(
+        AppModule,
+      );
 
   app.enableShutdownHooks();
 
-  const appService = app.get(AppService);
-
-  appService.start();
+  console.log(
+    `CRM Worker running [${env.APP_ENV}]`,
+  );
 }
 
-void bootstrap();
+void bootstrap()
+  .catch(
+    (
+      error:
+        unknown,
+    ) => {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Unknown bootstrap error';
+
+      console.error(
+        `CRM Worker failed to start: ${message}`,
+      );
+
+      process.exitCode = 1;
+    },
+  );
