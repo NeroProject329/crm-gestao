@@ -19,11 +19,12 @@ import {
   FileCheck2,
   LayoutDashboard,
   LogOut,
+  Megaphone,
   Orbit,
+  Settings2,
   ShieldCheck,
   UsersRound,
   WalletCards,
-  Megaphone,
 } from 'lucide-react';
 
 import type {
@@ -62,6 +63,18 @@ const navigation = [
     icon:
       UsersRound,
   },
+
+  {
+    href:
+      '/admin/ads',
+
+    label:
+      'ADS',
+
+    icon:
+      Megaphone,
+  },
+
   {
     href:
       '/admin/comprovantes',
@@ -74,27 +87,26 @@ const navigation = [
   },
 
   {
-  href:
-    '/admin/pagamentos',
+    href:
+      '/admin/pagamentos',
 
-  label:
-    'Pagamentos',
+    label:
+      'Pagamentos',
 
-  icon:
-    WalletCards,
-},
+    icon:
+      WalletCards,
+  },
 
-{
-  href:
-    '/admin/ads',
+  {
+    href:
+      '/admin/configuracoes',
 
-  label:
-    'ADS',
+    label:
+      'Configurações',
 
-  icon:
-    Megaphone,
-},
-
+    icon:
+      Settings2,
+  },
 ] as const;
 
 function titleForPath(
@@ -122,18 +134,18 @@ function titleForPath(
   }
 
   if (
-  pathname.startsWith(
-    '/admin/ads',
-  )
-) {
-  return {
-    eyebrow:
-      'Investimentos e tráfego',
+    pathname.startsWith(
+      '/admin/ads',
+    )
+  ) {
+    return {
+      eyebrow:
+        'Investimentos e tráfego',
 
-    title:
-      'Gestão de ADS',
-  };
-}
+      title:
+        'Gestão de ADS',
+    };
+  }
 
   if (
     pathname.startsWith(
@@ -149,20 +161,33 @@ function titleForPath(
     };
   }
 
+  if (
+    pathname.startsWith(
+      '/admin/pagamentos',
+    )
+  ) {
+    return {
+      eyebrow:
+        'Fechamento semanal',
+
+      title:
+        'Pagamentos',
+    };
+  }
 
   if (
-  pathname.startsWith(
-    '/admin/pagamentos',
-  )
-) {
-  return {
-    eyebrow:
-      'Fechamento semanal',
+    pathname.startsWith(
+      '/admin/configuracoes',
+    )
+  ) {
+    return {
+      eyebrow:
+        'Políticas e vigências',
 
-    title:
-      'Pagamentos',
-  };
-}
+      title:
+        'Configurações financeiras',
+    };
+  }
 
   return {
     eyebrow:
