@@ -23,6 +23,7 @@ import {
   ShieldCheck,
   UsersRound,
   WalletCards,
+  Megaphone,
 } from 'lucide-react';
 
 import type {
@@ -82,6 +83,18 @@ const navigation = [
   icon:
     WalletCards,
 },
+
+{
+  href:
+    '/admin/ads',
+
+  label:
+    'ADS',
+
+  icon:
+    Megaphone,
+},
+
 ] as const;
 
 function titleForPath(
@@ -107,6 +120,21 @@ function titleForPath(
         'Funcionários',
     };
   }
+
+  if (
+  pathname.startsWith(
+    '/admin/ads',
+  )
+) {
+  return {
+    eyebrow:
+      'Investimentos e tráfego',
+
+    title:
+      'Gestão de ADS',
+  };
+}
+
   if (
     pathname.startsWith(
       '/admin/comprovantes',
