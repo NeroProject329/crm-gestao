@@ -15,5 +15,3 @@ getHealth(): HealthResponse {
   return this.appService.getHealth();
 }
 }
-
-// staging rollback drill
