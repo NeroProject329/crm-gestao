@@ -41,6 +41,10 @@ import {
   formatBusinessDate,
 } from '@/lib/format';
 
+import {
+  FinanceScene,
+} from '@/components/three/finance-scene';
+
 type StatusFilter =
   | 'ALL'
   | WeeklySettlementStatus;
@@ -691,7 +695,7 @@ export function AdminSettlementsClient() {
   return (
     <section className="settlements-page">
       <header className="settlements-hero">
-        <div>
+        <div className="admin-hero-copy">
           <span className="section-kicker">
             FECHAMENTO SEMANAL
           </span>
@@ -730,6 +734,10 @@ export function AdminSettlementsClient() {
                 : '—'}
             </strong>
           </div>
+        </div>
+
+        <div className="admin-hero-three settlements-scene">
+          <FinanceScene />
         </div>
       </header>
 

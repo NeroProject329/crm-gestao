@@ -44,6 +44,10 @@ import {
   AdminFinancialChart,
 } from './admin-financial-chart';
 
+import {
+  FinanceScene,
+} from '@/components/three/finance-scene';
+
 const PRESETS: Array<{
   value:
     DashboardPreset;
@@ -438,7 +442,7 @@ export function AdminDashboardClient() {
       ================================================= */}
 
       <header className="admin-dashboard-hero admin-reveal">
-        <div>
+        <div className="admin-hero-copy">
           <span className="section-kicker">
             COMMAND CENTER
           </span>
@@ -489,6 +493,10 @@ export function AdminDashboardClient() {
             </div>
           </div>
         ) : null}
+
+        <div className="admin-hero-three admin-dashboard-scene">
+          <FinanceScene />
+        </div>
       </header>
 
       {/* =================================================

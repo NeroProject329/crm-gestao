@@ -48,6 +48,10 @@ import {
   formatBusinessDate,
 } from '@/lib/format';
 
+import {
+  FinanceScene,
+} from '@/components/three/finance-scene';
+
 type ReceiptFilter =
   | 'ALL'
   | ReceiptStatus;
@@ -958,7 +962,7 @@ export function AdminReceiptsClient() {
       ================================================== */}
 
       <header className="admin-receipts-hero admin-receipt-reveal">
-        <div>
+        <div className="admin-hero-copy">
           <span className="section-kicker">
             RECEBIMENTOS
           </span>
@@ -990,6 +994,10 @@ export function AdminReceiptsClient() {
               Aprovação, rejeição e reversão auditáveis
             </span>
           </div>
+        </div>
+
+        <div className="admin-hero-three admin-receipts-scene">
+          <FinanceScene />
         </div>
       </header>
 

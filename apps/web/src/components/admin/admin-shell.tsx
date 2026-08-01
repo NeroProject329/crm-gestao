@@ -21,6 +21,7 @@ import {
   LogOut,
   Orbit,
   ShieldCheck,
+  UsersRound,
   WalletCards,
 } from 'lucide-react';
 
@@ -50,6 +51,16 @@ const navigation = [
       LayoutDashboard,
   },
 
+  {
+    href:
+      '/admin/funcionarios',
+
+    label:
+      'Funcionários',
+
+    icon:
+      UsersRound,
+  },
   {
     href:
       '/admin/comprovantes',
@@ -83,6 +94,19 @@ function titleForPath(
   title:
     string;
 } {
+  if (
+    pathname.startsWith(
+      '/admin/funcionarios',
+    )
+  ) {
+    return {
+      eyebrow:
+        'Equipe e acessos',
+
+      title:
+        'Funcionários',
+    };
+  }
   if (
     pathname.startsWith(
       '/admin/comprovantes',
