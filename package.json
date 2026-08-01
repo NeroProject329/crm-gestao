@@ -1,32 +1,33 @@
 {
-  "name": "crm-gestao",
-  "version": "0.1.0",
-  "private": true,
-  "description": "CRM de Gestão Comercial e Contabilidade",
-  "packageManager": "pnpm@11.18.0",
-  "engines": {
-    "node": ">=24.0.0 <25",
-    "pnpm": ">=11.0.0 <12"
-  },
-  "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck",
-    "test": "turbo run test",
-    "test:e2e": "pnpm --filter \"@crm/api\" test:e2e",
-    "db:validate": "pnpm --filter \"@crm/database\" db:validate",
-    "db:generate": "pnpm --filter \"@crm/database\" db:generate",
-    "db:migrate:deploy": "pnpm --filter \"@crm/database\" db:migrate:deploy",
-    "db:seed": "pnpm --filter \"@crm/database\" db:seed",
-    "db:verify": "pnpm --filter \"@crm/database\" db:verify",
-    "smoke": "node scripts/smoke.mjs",
-    "ci:check": "pnpm db:validate && pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build",
-    "clean": "turbo run clean"
-  },
-  "devDependencies": {
-    "@types/node": "^26.1.2",
-    "turbo": "^2.10.7",
-    "typescript": "7.0.2"
-  }
+    "name":  "crm-gestao",
+    "version":  "0.1.0",
+    "private":  true,
+    "description":  "CRM de GestÃ£o Comercial e Contabilidade",
+    "packageManager":  "pnpm@11.18.0",
+    "engines":  {
+                    "node":  "\u003e=24.0.0 \u003c25",
+                    "pnpm":  "\u003e=11.0.0 \u003c12"
+                },
+    "scripts":  {
+                    "dev":  "turbo run dev",
+                    "build":  "turbo run build",
+                    "lint":  "turbo run lint",
+                    "typecheck":  "turbo run typecheck",
+                    "test":  "turbo run test",
+                    "test:e2e":  "pnpm --filter \"@crm/api\" test:e2e",
+                    "db:validate":  "pnpm --filter \"@crm/database\" db:validate",
+                    "db:generate":  "pnpm --filter \"@crm/database\" db:generate",
+                    "db:migrate:deploy":  "pnpm --filter \"@crm/database\" db:migrate:deploy",
+                    "db:seed":  "pnpm --filter \"@crm/database\" db:seed",
+                    "db:verify":  "pnpm --filter \"@crm/database\" db:verify",
+                    "smoke":  "node scripts/smoke.mjs",
+                    "ci:check":  "pnpm db:validate \u0026\u0026 pnpm typecheck \u0026\u0026 pnpm test \u0026\u0026 pnpm test:e2e \u0026\u0026 pnpm build",
+                    "clean":  "turbo run clean",
+                    "db:migrate:status":  "pnpm --filter \"@crm/database\" db:migrate:status"
+                },
+    "devDependencies":  {
+                            "@types/node":  "^26.1.2",
+                            "turbo":  "^2.10.7",
+                            "typescript":  "7.0.2"
+                        }
 }
