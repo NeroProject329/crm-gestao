@@ -65,6 +65,10 @@ import {
 } from './employees/employees.module';
 
 import {
+  NotificationsModule,
+} from './notifications/notifications.module';
+
+import {
   RankingModule,
 } from './ranking/ranking.module';
 
@@ -85,6 +89,7 @@ import {
     DatabaseModule,
 
     AuthModule,
+    NotificationsModule,
 
     EmployeesModule,
     BankFeesModule,

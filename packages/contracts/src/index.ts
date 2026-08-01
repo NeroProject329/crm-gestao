@@ -14,6 +14,14 @@ export type {
 } from './auth';
 
 export type {
+  AccountSessionView,
+  AccountSessionActionResponse,
+  NotificationView,
+  NotificationInboxView,
+  NotificationActionResponse,
+} from './account';
+
+export type {
   AdminEmployeeView,
   AdminUserStatus,
   BankFeePolicyView,

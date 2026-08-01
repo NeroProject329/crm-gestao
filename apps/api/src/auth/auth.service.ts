@@ -30,6 +30,11 @@ import type {
   AuthenticatedUserView,
 } from '@crm/contracts';
 
+import type {
+  AccountSessionActionResponse,
+  AccountSessionView,
+} from '@crm/contracts';
+
 import {
   parseAuthEnv,
 } from '@crm/config';
@@ -444,6 +449,56 @@ export class AuthService {
       role:
         user.role,
     };
+  }
+
+  /* =======================================================
+     ACTIVE SESSIONS
+  ======================================================= */
+
+  async listSessions(
+    auth: AuthContext,
+  ): Promise<AccountSessionView[]> {
+    const sessions = await this.database.prisma.refreshSession.findMany({
+      where: {
+        userId: auth.userId,
+        revokedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return sessions.map((session) => ({
+      id: session.id,
+      current: session.id === auth.sessionId,
+      createdAt: session.createdAt.toISOString(),
+      expiresAt: session.expiresAt.toISOString(),
+    }));
+  }
+
+  async revokeOtherSessions(
+    auth: AuthContext,
+  ): Promise<AccountSessionActionResponse> {
+    const result = await this.database.prisma.refreshSession.updateMany({
+      where: {
+        userId: auth.userId,
+        id: { not: auth.sessionId },
+        revokedAt: null,
+      },
+      data: { revokedAt: new Date() },
+    });
+
+    return { revokedSessions: result.count };
+  }
+
+  async revokeAllSessions(
+    auth: AuthContext,
+  ): Promise<AccountSessionActionResponse> {
+    const result = await this.database.prisma.refreshSession.updateMany({
+      where: { userId: auth.userId, revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
+
+    return { revokedSessions: result.count };
   }
 
   /* =======================================================

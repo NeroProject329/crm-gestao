@@ -21,6 +21,7 @@ import {
   LogOut,
   Orbit,
   ReceiptText,
+  UserRound,
   WalletCards,
 } from 'lucide-react';
 
@@ -82,6 +83,17 @@ const navigation = [
     icon:
       ReceiptText,
   },
+
+  {
+    href:
+      '/app/conta',
+
+    label:
+      'Minha conta',
+
+    icon:
+      UserRound,
+  },
 ] as const;
 
 function titleForPath(
@@ -129,6 +141,20 @@ function titleForPath(
 
       title:
         'Pagamentos',
+    };
+  }
+
+  if (
+    pathname.startsWith(
+      '/app/conta',
+    )
+  ) {
+    return {
+      eyebrow:
+        'Perfil e segurança',
+
+      title:
+        'Minha conta',
     };
   }
 
@@ -440,26 +466,22 @@ export function EmployeeShell({
           </div>
 
           <div className="topbar-actions">
-            <button
-              type="button"
-
+            <Link
+              href="/app/conta#notificacoes"
               className="icon-button"
-
               aria-label="Notificações"
             >
-              <Bell
-                size={19}
-              />
-            </button>
+              <Bell size={19} />
+            </Link>
 
-            <div className="topbar-avatar">
+            <Link href="/app/conta" className="topbar-avatar" aria-label="Minha conta">
               {
                 user.name
                   .trim()
                   .charAt(0)
                   .toUpperCase()
               }
-            </div>
+            </Link>
           </div>
         </header>
 

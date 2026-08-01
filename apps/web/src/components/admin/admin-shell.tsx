@@ -22,6 +22,7 @@ import {
   Megaphone,
   Orbit,
   Settings2,
+  UserRound,
   ShieldCheck,
   UsersRound,
   WalletCards,
@@ -107,6 +108,17 @@ const navigation = [
     icon:
       Settings2,
   },
+
+  {
+    href:
+      '/admin/conta',
+
+    label:
+      'Minha conta',
+
+    icon:
+      UserRound,
+  },
 ] as const;
 
 function titleForPath(
@@ -186,6 +198,20 @@ function titleForPath(
 
       title:
         'Configurações financeiras',
+    };
+  }
+
+  if (
+    pathname.startsWith(
+      '/admin/conta',
+    )
+  ) {
+    return {
+      eyebrow:
+        'Perfil e segurança',
+
+      title:
+        'Minha conta',
     };
   }
 
@@ -496,24 +522,22 @@ export function AdminShell({
           </div>
 
           <div className="topbar-actions">
-            <button
-              type="button"
+            <Link
+              href="/admin/conta#notificacoes"
               className="icon-button"
               aria-label="Notificações"
             >
-              <Bell
-                size={19}
-              />
-            </button>
+              <Bell size={19} />
+            </Link>
 
-            <div className="topbar-avatar admin-avatar">
+            <Link href="/admin/conta" className="topbar-avatar admin-avatar" aria-label="Minha conta">
               {user.name
                 .trim()
                 .charAt(
                   0,
                 )
                 .toUpperCase()}
-            </div>
+            </Link>
           </div>
         </header>
 

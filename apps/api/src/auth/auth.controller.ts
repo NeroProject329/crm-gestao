@@ -30,6 +30,11 @@ import type {
 } from '@crm/contracts';
 
 import type {
+  AccountSessionActionResponse,
+  AccountSessionView,
+} from '@crm/contracts';
+
+import type {
   AuthContext,
 } from './auth-context';
 
@@ -208,6 +213,36 @@ export class AuthController {
     return this.auth.currentUser(
       auth,
     );
+  }
+
+  /* =======================================================
+     SESSIONS
+  ======================================================= */
+
+  @Get('sessions')
+  sessions(
+    @CurrentUser() auth: AuthContext,
+  ): Promise<AccountSessionView[]> {
+    return this.auth.listSessions(auth);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('sessions/revoke-others')
+  revokeOtherSessions(
+    @CurrentUser() auth: AuthContext,
+  ): Promise<AccountSessionActionResponse> {
+    return this.auth.revokeOtherSessions(auth);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('sessions/revoke-all')
+  async revokeAllSessions(
+    @CurrentUser() auth: AuthContext,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<AccountSessionActionResponse> {
+    const result = await this.auth.revokeAllSessions(auth);
+    this.clearCookies(response);
+    return result;
   }
 
   /* =======================================================
