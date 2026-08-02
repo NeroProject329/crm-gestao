@@ -28,6 +28,12 @@ import {
   WalletCards,
 } from 'lucide-react';
 
+/* STAGE 13E — RESPONSIVE SHELL */
+import {
+  Menu,
+  X,
+} from 'lucide-react';
+
 import type {
   AuthenticatedUserView,
 } from '@crm/contracts';
@@ -260,6 +266,12 @@ export function AdminShell({
       false,
     );
 
+  const [
+    mobileMenuOpen,
+    setMobileMenuOpen,
+  ] =
+    useState(false);
+
   const header =
     useMemo(
       () =>
@@ -358,6 +370,50 @@ export function AdminShell({
     router,
   ]);
 
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [
+    pathname,
+  ]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) {
+      return;
+    }
+
+    const previousOverflow =
+      document.body.style.overflow;
+
+    const handleKeyDown = (
+      event: KeyboardEvent,
+    ): void => {
+      if (event.key === 'Escape') {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.body.style.overflow =
+      'hidden';
+
+    window.addEventListener(
+      'keydown',
+      handleKeyDown,
+    );
+
+    return () => {
+      document.body.style.overflow =
+        previousOverflow;
+
+      window.removeEventListener(
+        'keydown',
+        handleKeyDown,
+      );
+    };
+  }, [
+    mobileMenuOpen,
+  ]);
+
   async function logout():
     Promise<void> {
     setLogoutLoading(
@@ -396,7 +452,27 @@ export function AdminShell({
 
   return (
     <div className="crm-shell admin-crm-shell">
-      <aside className="crm-sidebar">
+      <aside
+        id="crm-sidebar"
+        className={[
+          'crm-sidebar',
+          mobileMenuOpen
+            ? 'is-open'
+            : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        <button
+          type="button"
+          className="sidebar-mobile-close"
+          aria-label="Fechar menu"
+          onClick={() => {
+            setMobileMenuOpen(false);
+          }}
+        >
+          <X size={20} />
+        </button>
         <div className="sidebar-brand admin-sidebar-brand">
           <div className="sidebar-logo">
             <Orbit
@@ -423,7 +499,10 @@ export function AdminShell({
           Administração
         </p>
 
-        <nav className="sidebar-nav">
+        <nav
+          className="sidebar-nav"
+          aria-label="Navegação administrativa"
+        >
           {navigation.map(
             ({
               href,
@@ -509,8 +588,46 @@ export function AdminShell({
         </div>
       </aside>
 
-      <main className="crm-main">
+      <button
+        type="button"
+        className={[
+          'sidebar-overlay',
+          mobileMenuOpen
+            ? 'is-visible'
+            : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        aria-label="Fechar menu"
+        tabIndex={
+          mobileMenuOpen
+            ? 0
+            : -1
+        }
+        onClick={() => {
+          setMobileMenuOpen(false);
+        }}
+      />
+
+      <main
+        id="crm-content"
+        className="crm-main"
+        tabIndex={-1}
+      >
         <header className="crm-topbar">
+          <button
+            type="button"
+            className="mobile-menu-button"
+            aria-label="Abrir menu administrativo"
+            aria-controls="crm-sidebar"
+            aria-expanded={mobileMenuOpen}
+            onClick={() => {
+              setMobileMenuOpen(true);
+            }}
+          >
+            <Menu size={21} />
+          </button>
+
           <div className="crm-topbar-copy">
             <p>
               {header.eyebrow}

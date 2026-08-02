@@ -12628,3 +12628,1612 @@ tr:last-child td {
 /* STAGE 13D AUTO START */
 .account-page{padding:32px;display:grid;gap:22px;color:#0c1b33}.account-hero{position:relative;overflow:hidden;min-height:300px;border-radius:28px;padding:38px;background:linear-gradient(135deg,#061a3a,#0b4fd8);color:#fff;box-shadow:0 22px 60px rgba(5,35,94,.2)}.account-hero-copy{position:relative;z-index:2;max-width:620px}.account-hero-copy>span{display:inline-flex;gap:8px;align-items:center;font-size:12px;font-weight:800;letter-spacing:.12em}.account-hero h1{max-width:560px;margin:18px 0 10px;font-size:clamp(32px,4vw,58px);line-height:1}.account-hero p{max-width:520px;color:rgba(255,255,255,.75);font-size:16px}.account-scene{position:absolute;inset:0 0 0 45%;opacity:.72}.account-hero-stats{position:absolute;right:28px;bottom:26px;z-index:2;display:flex;gap:10px}.account-hero-stats>div{min-width:125px;padding:14px;border:1px solid rgba(255,255,255,.18);border-radius:18px;background:rgba(3,18,45,.55);backdrop-filter:blur(10px);display:grid;grid-template-columns:auto 1fr;gap:4px 9px}.account-hero-stats svg{grid-row:1/3}.account-hero-stats span{font-size:12px;color:rgba(255,255,255,.68)}.account-hero-stats strong{font-size:22px}.account-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.account-card,.account-panel{border:1px solid #e3e9f2;border-radius:24px;background:#fff;box-shadow:0 12px 36px rgba(11,39,80,.07)}.account-card{padding:24px}.account-card>header,.account-panel>header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}.account-card header span,.account-panel header span{font-size:11px;font-weight:800;letter-spacing:.12em;color:#1769e0}.account-card h2,.account-panel h2{margin:5px 0 0;font-size:22px}.account-profile{display:flex;align-items:center;gap:14px;margin:28px 0}.account-profile>div{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;background:#0b4fd8;color:#fff;font-size:24px;font-weight:800}.account-profile p{display:grid;gap:4px}.account-profile p span,.account-card dd{color:#66758d}.account-card dl{display:grid;gap:10px}.account-card dl>div{padding:13px 0;border-top:1px solid #edf1f6}.account-card dt{display:flex;align-items:center;gap:7px;font-size:12px;color:#66758d}.account-card dd{margin:5px 0 0;font-weight:700}.account-form{display:grid;gap:14px;margin-top:22px}.account-form label{display:grid;gap:7px;font-size:12px;font-weight:800}.account-form input{height:46px;border:1px solid #dce4ef;border-radius:13px;padding:0 14px;font:inherit}.account-checks{display:flex;gap:10px;flex-wrap:wrap}.account-checks span{display:flex;align-items:center;gap:5px;color:#9aa6b7;font-size:12px}.account-checks span.ok{color:#159447}.account-checks svg{width:14px}.account-primary,.account-panel button,.account-empty button{min-height:42px;border:0;border-radius:12px;padding:0 15px;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#0b4fd8;color:#fff;font-weight:800;cursor:pointer}.account-primary:disabled,.account-panel button:disabled{opacity:.45;cursor:not-allowed}.account-form small{color:#7b899d;line-height:1.5}.account-panel{padding:24px}.account-panel header p{margin:6px 0 0;color:#708096}.account-panel header>div:last-child{display:flex;gap:8px;flex-wrap:wrap}.account-panel button.danger{background:#fff0f0;color:#c43131}.account-list{display:grid;gap:10px;margin-top:20px}.account-list article{display:flex;align-items:center;gap:14px;padding:16px;border:1px solid #e6ebf2;border-radius:16px}.account-list article.current,.account-list article.unread{border-color:#9dc1ff;background:#f5f9ff}.account-list article>div{display:grid;gap:4px;flex:1}.account-list article span,.account-list article small,.account-list article p{color:#718096;font-size:12px}.account-list article p{margin:4px 0}.account-list article button{margin-left:auto}.account-empty{min-height:160px;display:grid;place-items:center;align-content:center;gap:8px;text-align:center;color:#7a899f}.account-loading{min-height:55vh;place-items:center;align-content:center}.account-spin{animation:account-spin .8s linear infinite}@keyframes account-spin{to{transform:rotate(360deg)}}.account-toast{position:fixed;right:24px;bottom:24px;z-index:100;padding:14px 18px;border-radius:14px;color:#fff;font-weight:800;box-shadow:0 18px 45px rgba(0,0,0,.2)}.account-toast.success{background:#159447}.account-toast.error{background:#c43131}@media(max-width:980px){.account-grid{grid-template-columns:1fr}.account-scene{left:25%;opacity:.5}.account-hero-stats{position:relative;right:auto;bottom:auto;margin-top:28px}.account-panel>header{flex-direction:column}}@media(max-width:640px){.account-page{padding:16px}.account-hero{padding:26px 20px}.account-scene{left:0;opacity:.3}.account-hero-stats{display:grid}.account-hero-stats>div{min-width:0}.account-card,.account-panel{padding:18px}.account-panel header>div:last-child,.account-panel header>button{width:100%}.account-panel button{flex:1}.account-list article{align-items:flex-start;flex-wrap:wrap}.account-list article button{width:100%;margin-left:0}.account-toast{left:16px;right:16px;bottom:16px}}
 /* STAGE 13D AUTO END */
+
+/* =========================================================
+   STAGE 13E — RESPONSIVE UX START
+========================================================= */
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline:
+    3px solid
+    rgba(
+      18,
+      107,
+      255,
+      0.32
+    );
+
+  outline-offset: 3px;
+}
+
+.crm-main:focus {
+  outline: none;
+}
+
+.mobile-menu-button,
+.sidebar-mobile-close,
+.sidebar-overlay {
+  display: none;
+}
+
+.crm-sidebar {
+  z-index: 50;
+}
+
+.crm-main,
+.dashboard-page,
+.admin-dashboard-page,
+.admin-employees-page,
+.admin-ads-page,
+.admin-receipts-page,
+.admin-settings-page,
+.account-page,
+.settlements-page,
+.employee-financial-page,
+.employee-receipts-page,
+.employee-payments-page {
+  width: 100%;
+  min-width: 0;
+}
+
+.crm-topbar {
+  position: relative;
+  z-index: 30;
+}
+
+.crm-topbar-copy {
+  min-width: 0;
+}
+
+.crm-topbar-copy h1,
+.crm-topbar-copy p {
+  overflow-wrap: anywhere;
+}
+
+.topbar-avatar {
+  flex: 0 0 auto;
+}
+
+.sidebar-link,
+.logout-button,
+.icon-button,
+.topbar-avatar,
+.mobile-menu-button,
+.sidebar-mobile-close {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.logout-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.hero-card,
+.admin-dashboard-hero,
+.employees-hero,
+.ads-hero,
+.receipts-hero,
+.settlements-hero,
+.employee-payment-hero,
+.admin-settings-hero,
+.account-hero {
+  isolation: isolate;
+}
+
+.hero-card > *,
+.admin-dashboard-hero > *,
+.employees-hero > *,
+.ads-hero > *,
+.receipts-hero > *,
+.settlements-hero > *,
+.employee-payment-hero > *,
+.admin-settings-hero > *,
+.account-hero > * {
+  min-width: 0;
+}
+
+.period-pills,
+.employees-filter-list,
+.ads-filter-list,
+.receipts-filter-list,
+.settlements-filter-list {
+  scroll-snap-type:
+    x proximity;
+}
+
+.period-pill,
+.employees-filter-list button,
+.ads-filter-list button,
+.receipts-filter-list button,
+.settlements-filter-list button {
+  scroll-snap-align:
+    start;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+[class*="table-wrap"],
+[class*="table-container"],
+.admin-table,
+.receipts-table,
+.settlements-table {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline:
+    contain;
+  scrollbar-width: thin;
+}
+
+[class*="table-wrap"] table,
+[class*="table-container"] table,
+.admin-table table,
+.receipts-table table,
+.settlements-table table {
+  min-width: 720px;
+}
+
+dialog,
+[role="dialog"],
+.modal-card,
+.receipt-preview-modal {
+  max-width:
+    calc(
+      100vw - 32px
+    );
+}
+
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+img,
+svg,
+canvas,
+video,
+iframe {
+  max-width: 100%;
+}
+
+.employees-list,
+.ads-list,
+.receipts-list,
+.settlements-list,
+.account-session-list,
+.account-notification-list {
+  content-visibility: auto;
+  contain-intrinsic-size:
+    1px 500px;
+}
+
+@media (
+  max-width: 1180px
+) {
+  .crm-shell {
+    grid-template-columns:
+      220px
+      minmax(0, 1fr);
+  }
+
+  .crm-main {
+    padding:
+      10px 8px 52px;
+  }
+
+  .metrics-grid,
+  .admin-summary-grid,
+  .employees-statistics,
+  .ads-summary-grid,
+  .receipts-summary-grid,
+  .settings-summary-grid {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
+  }
+
+  .admin-dashboard-hero,
+  .employees-hero,
+  .ads-hero,
+  .receipts-hero,
+  .settlements-hero,
+  .employee-payment-hero,
+  .admin-settings-hero,
+  .account-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-operation-stats,
+  .account-hero-card {
+    width: 100%;
+  }
+
+  .employee-management-card {
+    grid-template-columns:
+      minmax(
+        0,
+        1fr
+      )
+      auto;
+  }
+
+  .employee-management-meta {
+    grid-column:
+      1 / -1;
+  }
+}
+
+@media (
+  max-width: 900px
+) {
+  .crm-shell {
+    display: block;
+    min-height: 100dvh;
+    padding: 0;
+  }
+
+  .crm-sidebar {
+    position: fixed;
+    inset:
+      0 auto 0 0;
+
+    width:
+      min(
+        86vw,
+        310px
+      );
+
+    height: 100dvh;
+
+    padding:
+      20px 18px
+      calc(
+        20px +
+        env(
+          safe-area-inset-bottom
+        )
+      );
+
+    border-radius:
+      0 26px 26px 0;
+
+    overflow-y: auto;
+    overscroll-behavior:
+      contain;
+
+    transform:
+      translateX(
+        -105%
+      );
+
+    visibility: hidden;
+
+    box-shadow:
+      24px 0 70px
+      rgba(
+        7,
+        17,
+        31,
+        0.3
+      );
+
+    transition:
+      transform
+        220ms ease,
+      visibility
+        220ms ease;
+  }
+
+  .crm-sidebar.is-open {
+    transform:
+      translateX(0);
+
+    visibility: visible;
+  }
+
+  .sidebar-mobile-close {
+    position: absolute;
+    top:
+      max(
+        14px,
+        env(
+          safe-area-inset-top
+        )
+      );
+    right: 14px;
+
+    z-index: 3;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color:
+      rgba(
+        255,
+        255,
+        255,
+        0.82
+      );
+
+    border:
+      1px solid
+      rgba(
+        255,
+        255,
+        255,
+        0.11
+      );
+
+    border-radius:
+      13px;
+
+    cursor: pointer;
+
+    background:
+      rgba(
+        255,
+        255,
+        255,
+        0.07
+      );
+  }
+
+  .sidebar-brand {
+    padding-right: 52px;
+  }
+
+  .sidebar-nav {
+    padding-bottom: 12px;
+  }
+
+  .sidebar-link {
+    min-height: 50px;
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+
+    z-index: 45;
+
+    display: block;
+
+    padding: 0;
+
+    border: 0;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    background:
+      rgba(
+        2,
+        8,
+        18,
+        0.58
+      );
+
+    backdrop-filter:
+      blur(5px);
+
+    -webkit-backdrop-filter:
+      blur(5px);
+
+    transition:
+      opacity
+        220ms ease;
+  }
+
+  .sidebar-overlay.is-visible {
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  .crm-main {
+    min-height: 100dvh;
+
+    padding:
+      calc(
+        88px +
+        env(
+          safe-area-inset-top
+        )
+      )
+      16px
+      calc(
+        40px +
+        env(
+          safe-area-inset-bottom
+        )
+      );
+  }
+
+  .crm-topbar {
+    position: fixed;
+    inset:
+      0 0 auto 0;
+
+    min-height:
+      calc(
+        72px +
+        env(
+          safe-area-inset-top
+        )
+      );
+
+    padding:
+      max(
+        10px,
+        env(
+          safe-area-inset-top
+        )
+      )
+      16px
+      10px;
+
+    gap: 11px;
+
+    border-bottom:
+      1px solid
+      rgba(
+        211,
+        222,
+        235,
+        0.86
+      );
+
+    background:
+      rgba(
+        247,
+        249,
+        252,
+        0.92
+      );
+
+    box-shadow:
+      0 10px 28px
+      rgba(
+        7,
+        17,
+        31,
+        0.06
+      );
+
+    backdrop-filter:
+      blur(18px);
+
+    -webkit-backdrop-filter:
+      blur(18px);
+  }
+
+  .mobile-menu-button {
+    flex: 0 0 auto;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color:
+      var(--foreground);
+
+    border:
+      1px solid
+      var(--border);
+
+    border-radius:
+      14px;
+
+    cursor: pointer;
+
+    background: #fff;
+
+    box-shadow:
+      0 8px 24px
+      rgba(
+        7,
+        17,
+        31,
+        0.05
+      );
+  }
+
+  .crm-topbar-copy {
+    flex: 1;
+  }
+
+  .crm-topbar-copy p {
+    display: none;
+  }
+
+  .crm-topbar-copy h1 {
+    margin: 0;
+
+    font-size:
+      clamp(
+        19px,
+        5.4vw,
+        27px
+      );
+
+    line-height: 1.08;
+  }
+
+  .topbar-actions {
+    gap: 7px;
+  }
+
+  .hero-card {
+    grid-template-columns:
+      1fr;
+
+    min-height: 300px;
+  }
+
+  .hero-three {
+    inset:
+      auto 0 0 auto;
+
+    width: 56%;
+    height: 72%;
+
+    opacity: 0.72;
+  }
+
+  .admin-dashboard-hero,
+  .employees-hero,
+  .ads-hero,
+  .receipts-hero,
+  .settlements-hero,
+  .employee-payment-hero,
+  .admin-settings-hero,
+  .account-hero {
+    min-height: auto;
+    padding:
+      clamp(
+        24px,
+        5vw,
+        34px
+      );
+  }
+
+  .employees-toolbar,
+  .ads-toolbar,
+  .receipts-toolbar,
+  .settlements-toolbar,
+  .settings-toolbar,
+  .account-panel-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .employees-search,
+  .ads-search,
+  .receipts-search,
+  .settlement-search {
+    width: 100%;
+    max-width: none;
+  }
+
+  .employees-filter-list,
+  .ads-filter-list,
+  .receipts-filter-list,
+  .settlements-filter-list {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .account-overview-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .account-panel-actions {
+    width: 100%;
+  }
+
+  .account-panel-actions > * {
+    flex: 1;
+  }
+
+  .receipt-preview-overlay {
+    overscroll-behavior:
+      contain;
+  }
+}
+
+@media (
+  max-width: 680px
+) {
+  body {
+    background:
+      var(--background);
+  }
+
+  .crm-main {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .crm-topbar {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .icon-button,
+  .topbar-avatar {
+    width: 42px;
+    height: 42px;
+  }
+
+  .metrics-grid,
+  .admin-summary-grid,
+  .employees-statistics,
+  .ads-summary-grid,
+  .receipts-summary-grid,
+  .settings-summary-grid,
+  .settlement-summary-grid,
+  .employee-payment-summary {
+    grid-template-columns:
+      1fr;
+  }
+
+  .metric-card,
+  .admin-summary-card,
+  .employees-statistics article {
+    min-height: auto;
+    padding: 19px;
+  }
+
+  .hero-card,
+  .admin-dashboard-hero,
+  .employees-hero,
+  .ads-hero,
+  .receipts-hero,
+  .settlements-hero,
+  .employee-payment-hero,
+  .admin-settings-hero,
+  .account-hero {
+    border-radius:
+      24px;
+  }
+
+  .hero-card {
+    padding: 25px;
+  }
+
+  .hero-value,
+  .employees-hero h1,
+  .account-hero h1 {
+    font-size:
+      clamp(
+        36px,
+        12vw,
+        52px
+      );
+
+    overflow-wrap:
+      anywhere;
+  }
+
+  .admin-operation-stats {
+    grid-template-columns:
+      1fr;
+  }
+
+  .admin-operation-stats > div {
+    min-width: 0;
+  }
+
+  .employee-management-card {
+    grid-template-columns:
+      1fr;
+
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .employee-management-meta {
+    grid-column: auto;
+  }
+
+  .employee-name-line {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .employee-name-line h2,
+  .employee-management-person p {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .employee-management-actions,
+  .settlement-actions {
+    width: 100%;
+  }
+
+  .employee-management-actions > *,
+  .settlement-actions > * {
+    flex: 1;
+  }
+
+  .account-hero-scene {
+    opacity: 0.56;
+  }
+
+  .account-hero-card {
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .account-profile-card,
+  .account-password-card,
+  .account-sessions-panel,
+  .account-notifications-panel {
+    padding: 20px;
+    border-radius: 22px;
+  }
+
+  .account-session-card,
+  .account-notification-card {
+    grid-template-columns:
+      auto
+      minmax(
+        0,
+        1fr
+      );
+
+    align-items: flex-start;
+  }
+
+  .account-session-expiry,
+  .account-session-status,
+  .account-notification-card > button {
+    grid-column:
+      1 / -1;
+  }
+
+  .account-notification-card > button {
+    width: 100%;
+  }
+
+  dialog,
+  [role="dialog"],
+  .modal-card {
+    width:
+      calc(
+        100vw - 24px
+      );
+
+    max-height:
+      calc(
+        100dvh - 24px
+      );
+
+    overflow-y: auto;
+
+    border-radius: 22px;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+@media (
+  max-width: 430px
+) {
+  .crm-main {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .crm-topbar {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .crm-topbar-copy h1 {
+    font-size: 18px;
+  }
+
+  .topbar-actions {
+    gap: 5px;
+  }
+
+  .icon-button,
+  .topbar-avatar,
+  .mobile-menu-button {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .hero-card,
+  .admin-dashboard-hero,
+  .employees-hero,
+  .ads-hero,
+  .receipts-hero,
+  .settlements-hero,
+  .employee-payment-hero,
+  .admin-settings-hero,
+  .account-hero {
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .period-pill {
+    min-height: 44px;
+    padding:
+      0 15px;
+  }
+
+  .account-hero-card,
+  .account-panel-actions {
+    grid-template-columns:
+      1fr;
+    flex-direction: column;
+  }
+
+  .account-panel-actions > * {
+    width: 100%;
+  }
+
+  .account-profile-main {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .account-profile-details dd {
+    overflow-wrap: anywhere;
+  }
+
+  .receipt-preview-close span {
+    display: none;
+  }
+}
+
+@media (
+  hover: none
+) {
+  .sidebar-link:hover,
+  .metric-card:hover,
+  .admin-summary-card:hover,
+  .employee-management-card:hover,
+  .employees-primary-action:hover,
+  .primary-button:hover {
+    transform: none;
+  }
+}
+
+@media (
+  prefers-reduced-motion:
+    reduce
+) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration:
+      0.01ms !important;
+    animation-iteration-count:
+      1 !important;
+    transition-duration:
+      0.01ms !important;
+  }
+
+  [data-performance-scene="finance"] {
+    opacity: 0.72;
+  }
+}
+
+/* =========================================================
+   STAGE 13E — RESPONSIVE UX END
+========================================================= */
+
+/* STAGE 13E MOBILE SIDEBAR DESKTOP LAYOUT START */
+
+@media (max-width: 900px) {
+  .crm-sidebar {
+    position:
+      fixed !important;
+
+    top:
+      0 !important;
+
+    bottom:
+      0 !important;
+
+    left:
+      0 !important;
+
+    right:
+      auto !important;
+
+    display:
+      flex !important;
+
+    flex-direction:
+      column !important;
+
+    align-items:
+      stretch !important;
+
+    justify-content:
+      flex-start !important;
+
+    gap:
+      0 !important;
+
+    width:
+      min(
+        86vw,
+        320px
+      ) !important;
+
+    max-width:
+      320px !important;
+
+    height:
+      100dvh !important;
+
+    max-height:
+      100dvh !important;
+
+    margin:
+      0 !important;
+
+    padding:
+      18px !important;
+
+    overflow-x:
+      hidden !important;
+
+    overflow-y:
+      auto !important;
+
+    border-radius:
+      0 28px 28px 0 !important;
+  }
+
+  .crm-sidebar .sidebar-brand {
+    position:
+      static !important;
+
+    inset:
+      auto !important;
+
+    order:
+      1 !important;
+
+    flex:
+      0 0 auto !important;
+
+    display:
+      flex !important;
+
+    align-items:
+      center !important;
+
+    justify-content:
+      flex-start !important;
+
+    width:
+      100% !important;
+
+    min-height:
+      58px !important;
+
+    margin:
+      0 0 26px !important;
+
+    padding:
+      0 58px 0 6px !important;
+
+    transform:
+      none !important;
+  }
+
+  .crm-sidebar .sidebar-logo {
+    position:
+      static !important;
+
+    flex:
+      0 0 40px !important;
+
+    width:
+      40px !important;
+
+    height:
+      40px !important;
+
+    margin:
+      0 !important;
+
+    transform:
+      none !important;
+  }
+
+  .crm-sidebar .sidebar-brand strong {
+    display:
+      block !important;
+
+    width:
+      auto !important;
+
+    max-width:
+      170px !important;
+
+    margin:
+      0 !important;
+
+    overflow:
+      hidden !important;
+
+    opacity:
+      1 !important;
+
+    visibility:
+      visible !important;
+
+    font-size:
+      16px !important;
+
+    line-height:
+      1.2 !important;
+
+    text-align:
+      left !important;
+
+    text-overflow:
+      ellipsis !important;
+
+    white-space:
+      nowrap !important;
+  }
+
+  .crm-sidebar .admin-sidebar-brand > div:last-child {
+    display:
+      flex !important;
+
+    flex-direction:
+      column !important;
+
+    align-items:
+      flex-start !important;
+
+    justify-content:
+      center !important;
+
+    gap:
+      4px !important;
+
+    min-width:
+      0 !important;
+  }
+
+  .crm-sidebar .admin-role-badge {
+    position:
+      static !important;
+
+    display:
+      inline-flex !important;
+
+    align-items:
+      center !important;
+
+    width:
+      auto !important;
+
+    margin:
+      0 !important;
+
+    opacity:
+      1 !important;
+
+    visibility:
+      visible !important;
+
+    transform:
+      none !important;
+  }
+
+  .crm-sidebar .sidebar-label {
+    position:
+      static !important;
+
+    inset:
+      auto !important;
+
+    order:
+      2 !important;
+
+    display:
+      block !important;
+
+    width:
+      100% !important;
+
+    margin:
+      0 10px 10px !important;
+
+    padding:
+      0 !important;
+
+    overflow:
+      visible !important;
+
+    opacity:
+      1 !important;
+
+    visibility:
+      visible !important;
+
+    text-align:
+      left !important;
+
+    white-space:
+      normal !important;
+
+    transform:
+      none !important;
+  }
+
+  .crm-sidebar .sidebar-nav {
+    position:
+      static !important;
+
+    inset:
+      auto !important;
+
+    order:
+      3 !important;
+
+    flex:
+      0 0 auto !important;
+
+    display:
+      flex !important;
+
+    flex-direction:
+      column !important;
+
+    align-items:
+      stretch !important;
+
+    justify-content:
+      flex-start !important;
+
+    grid-template-columns:
+      none !important;
+
+    grid-auto-flow:
+      row !important;
+
+    gap:
+      6px !important;
+
+    width:
+      100% !important;
+
+    min-width:
+      0 !important;
+
+    height:
+      auto !important;
+
+    margin:
+      0 !important;
+
+    padding:
+      0 !important;
+
+    overflow:
+      visible !important;
+
+    opacity:
+      1 !important;
+
+    visibility:
+      visible !important;
+
+    transform:
+      none !important;
+  }
+
+  .crm-sidebar .sidebar-link {
+    position:
+      static !important;
+
+    flex:
+      0 0 auto !important;
+
+    display:
+      flex !important;
+
+    align-items:
+      center !important;
+
+    justify-content:
+      flex-start !important;
+
+    gap:
+      12px !important;
+
+    width:
+      100% !important;
+
+    min-width:
+      0 !important;
+
+    min-height:
+      48px !important;
+
+    margin:
+      0 !important;
+
+    padding:
+      0 14px !important;
+
+    overflow:
+      hidden !important;
+
+    opacity:
+      1 !important;
+
+    visibility:
+      visible !important;
+
+    border-radius:
+      14px !important;
+
+    transform:
+      none !important;
+  }
+
+  .crm-sidebar .sidebar-link svg {
+    position:
+      static !important;
+
+    flex:
+      0 0 19px !important;
+
+    width:
+      19px !important;
+
+    height:
+      19px !important;
+
+    margin:
+      0 !important;
+
+    transform:
+      none !important;
+  }
+
+  .crm-sidebar .sidebar-link span {
+    position:
+      static !important;
+
+    display:
+      block !important;
+
+    flex:
+      1 1 auto !important;
+
+    width:
+      auto !important;
+
+    max-width:
+      none !important;
+
+    height:
+      auto !important;
+
+    margin:
+      0 !important;
+
+    overflow:
+      hidden !important;
+
+    opacity:
+      1 !important;
+
+    visibility:
+      visible !important;
+
+    color:
+      inherit !important;
+
+    font-size:
+      14px !important;
+
+    font-weight:
+      600 !important;
+
+    line-height:
+      1.2 !important;
+
+    text-align:
+      left !important;
+
+    text-indent:
+      0 !important;
+
+    text-overflow:
+      ellipsis !important;
+
+    white-space:
+      nowrap !important;
+
+    transform:
+      none !important;
+  }
+
+  .crm-sidebar .sidebar-link:hover {
+    transform:
+      translateX(
+        3px
+      ) !important;
+  }
+
+  .crm-sidebar .sidebar-footer {
+    position:
+      static !important;
+
+    inset:
+      auto !important;
+
+    order:
+      4 !important;
+
+    flex:
+      0 0 auto !important;
+
+    display:
+      block !important;
+
+    width:
+      100% !important;
+
+    height:
+      auto !important;
+
+    margin:
+      auto 0 0 !important;
+
+    padding:
+      24px 0 0 !important;
+
+    opacity:
+      1 !important;
+
+    visibility:
+      visible !important;
+
+    transform:
+      none !important;
+  }
+
+  .crm-sidebar .user-chip {
+    position:
+      static !important;
+
+    display:
+      block !important;
+
+    width:
+      100% !important;
+
+    margin:
+      0 !important;
+
+    padding:
+      14px !important;
+
+    opacity:
+      1 !important;
+
+    visibility:
+      visible !important;
+
+    transform:
+      none !important;
+  }
+
+  .crm-sidebar .user-chip-name,
+  .crm-sidebar .user-chip-email {
+    position:
+      static !important;
+
+    display:
+      block !important;
+
+    width:
+      100% !important;
+
+    opacity:
+      1 !important;
+
+    visibility:
+      visible !important;
+
+    text-align:
+      left !important;
+
+    transform:
+      none !important;
+  }
+
+  .crm-sidebar .logout-button {
+    position:
+      static !important;
+
+    display:
+      flex !important;
+
+    align-items:
+      center !important;
+
+    justify-content:
+      flex-start !important;
+
+    gap:
+      10px !important;
+
+    width:
+      100% !important;
+
+    min-height:
+      44px !important;
+
+    margin:
+      10px 0 0 !important;
+
+    padding:
+      0 14px !important;
+
+    opacity:
+      1 !important;
+
+    visibility:
+      visible !important;
+
+    transform:
+      none !important;
+  }
+
+  .crm-sidebar .logout-button span {
+    display:
+      inline-block !important;
+
+    opacity:
+      1 !important;
+
+    visibility:
+      visible !important;
+  }
+
+  .crm-sidebar >
+  button[aria-label*="Fechar"],
+  .crm-sidebar >
+  button[aria-label*="fechar"] {
+    position:
+      absolute !important;
+
+    top:
+      16px !important;
+
+    right:
+      16px !important;
+
+    bottom:
+      auto !important;
+
+    left:
+      auto !important;
+
+    z-index:
+      20 !important;
+
+    width:
+      44px !important;
+
+    height:
+      44px !important;
+
+    margin:
+      0 !important;
+
+    padding:
+      0 !important;
+
+    transform:
+      none !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .crm-sidebar {
+    width:
+      min(
+        88vw,
+        300px
+      ) !important;
+
+    max-width:
+      300px !important;
+
+    padding:
+      16px !important;
+
+    border-radius:
+      0 24px 24px 0 !important;
+  }
+
+  .crm-sidebar .sidebar-brand {
+    margin-bottom:
+      22px !important;
+  }
+
+  .crm-sidebar .sidebar-link {
+    min-height:
+      46px !important;
+
+    padding:
+      0 13px !important;
+  }
+
+  .crm-sidebar .sidebar-link span {
+    font-size:
+      13px !important;
+  }
+}
+
+/* STAGE 13E MOBILE SIDEBAR DESKTOP LAYOUT END */

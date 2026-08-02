@@ -25,6 +25,12 @@ import {
   WalletCards,
 } from 'lucide-react';
 
+/* STAGE 13E — RESPONSIVE SHELL */
+import {
+  Menu,
+  X,
+} from 'lucide-react';
+
 import type {
   AuthenticatedUserView,
 } from '@crm/contracts';
@@ -197,6 +203,12 @@ export function EmployeeShell({
   ] =
     useState(false);
 
+  const [
+    mobileMenuOpen,
+    setMobileMenuOpen,
+  ] =
+    useState(false);
+
   const header =
     useMemo(
       () =>
@@ -285,6 +297,50 @@ export function EmployeeShell({
     ],
   );
 
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [
+    pathname,
+  ]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) {
+      return;
+    }
+
+    const previousOverflow =
+      document.body.style.overflow;
+
+    const handleKeyDown = (
+      event: KeyboardEvent,
+    ): void => {
+      if (event.key === 'Escape') {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.body.style.overflow =
+      'hidden';
+
+    window.addEventListener(
+      'keydown',
+      handleKeyDown,
+    );
+
+    return () => {
+      document.body.style.overflow =
+        previousOverflow;
+
+      window.removeEventListener(
+        'keydown',
+        handleKeyDown,
+      );
+    };
+  }, [
+    mobileMenuOpen,
+  ]);
+
   async function logout():
     Promise<void> {
     setLogoutLoading(true);
@@ -322,7 +378,27 @@ export function EmployeeShell({
 
   return (
     <div className="crm-shell">
-      <aside className="crm-sidebar">
+      <aside
+        id="crm-sidebar"
+        className={[
+          'crm-sidebar',
+          mobileMenuOpen
+            ? 'is-open'
+            : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        <button
+          type="button"
+          className="sidebar-mobile-close"
+          aria-label="Fechar menu"
+          onClick={() => {
+            setMobileMenuOpen(false);
+          }}
+        >
+          <X size={20} />
+        </button>
         <div className="sidebar-brand">
           <div className="sidebar-logo">
             <Orbit
@@ -339,7 +415,10 @@ export function EmployeeShell({
           Navegação
         </p>
 
-        <nav className="sidebar-nav">
+        <nav
+          className="sidebar-nav"
+          aria-label="Navegação principal"
+        >
           {
             navigation.map(
               ({
@@ -445,12 +524,50 @@ export function EmployeeShell({
         </div>
       </aside>
 
-      <main className="crm-main">
+      <button
+        type="button"
+        className={[
+          'sidebar-overlay',
+          mobileMenuOpen
+            ? 'is-visible'
+            : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        aria-label="Fechar menu"
+        tabIndex={
+          mobileMenuOpen
+            ? 0
+            : -1
+        }
+        onClick={() => {
+          setMobileMenuOpen(false);
+        }}
+      />
+
+      <main
+        id="crm-content"
+        className="crm-main"
+        tabIndex={-1}
+      >
         <header
           className="crm-topbar"
 
           data-motion="page-header"
         >
+          <button
+            type="button"
+            className="mobile-menu-button"
+            aria-label="Abrir menu principal"
+            aria-controls="crm-sidebar"
+            aria-expanded={mobileMenuOpen}
+            onClick={() => {
+              setMobileMenuOpen(true);
+            }}
+          >
+            <Menu size={21} />
+          </button>
+
           <div className="crm-topbar-copy">
             <p>
               {

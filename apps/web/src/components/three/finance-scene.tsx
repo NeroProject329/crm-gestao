@@ -29,14 +29,21 @@ export function FinanceScene() {
       return;
     }
 
-    const reducedMotion =
+    const reducedMotionQuery =
       window.matchMedia(
         '(prefers-reduced-motion: reduce)',
-      ).matches;
+      );
 
-    /* =====================================================
-       SCENE
-    ===================================================== */
+    const compactQuery =
+      window.matchMedia(
+        '(max-width: 760px), (pointer: coarse)',
+      );
+
+    const reducedMotion =
+      reducedMotionQuery.matches;
+
+    const compact =
+      compactQuery.matches;
 
     const scene =
       new THREE.Scene();
@@ -58,10 +65,13 @@ export function FinanceScene() {
     const renderer =
       new THREE.WebGLRenderer({
         canvas,
-        antialias: true,
+        antialias:
+          !compact,
         alpha: true,
         powerPreference:
-          'high-performance',
+          compact
+            ? 'low-power'
+            : 'high-performance',
       });
 
     renderer.setClearColor(
@@ -72,32 +82,29 @@ export function FinanceScene() {
     renderer.setPixelRatio(
       Math.min(
         window.devicePixelRatio,
-        1.7,
+        compact
+          ? 1.2
+          : 1.65,
       ),
     );
-
-    /* =====================================================
-       MAIN GROUP
-    ===================================================== */
 
     const group =
       new THREE.Group();
 
     scene.add(group);
 
-    /* =====================================================
-       CORE
-    ===================================================== */
-
     const coreGeometry =
       new THREE.IcosahedronGeometry(
         1.5,
-        2,
+        compact
+          ? 1
+          : 2,
       );
 
     const coreMaterial =
       new THREE.MeshBasicMaterial({
-        color: 0x2d8cff,
+        color:
+          0x2d8cff,
         wireframe: true,
         transparent: true,
         opacity: 0.9,
@@ -111,10 +118,6 @@ export function FinanceScene() {
 
     group.add(core);
 
-    /* =====================================================
-       INNER CORE
-    ===================================================== */
-
     const innerGeometry =
       new THREE.IcosahedronGeometry(
         0.82,
@@ -123,7 +126,8 @@ export function FinanceScene() {
 
     const innerMaterial =
       new THREE.MeshBasicMaterial({
-        color: 0x8bd1ff,
+        color:
+          0x8bd1ff,
         transparent: true,
         opacity: 0.13,
       });
@@ -136,16 +140,17 @@ export function FinanceScene() {
 
     group.add(inner);
 
-    /* =====================================================
-       ORBITS
-    ===================================================== */
+    const ringSegments =
+      compact
+        ? 80
+        : 160;
 
     const ringGeometryOne =
       new THREE.TorusGeometry(
         2.05,
         0.012,
         8,
-        160,
+        ringSegments,
       );
 
     const ringGeometryTwo =
@@ -153,15 +158,17 @@ export function FinanceScene() {
         2.35,
         0.01,
         8,
-        160,
+        ringSegments,
       );
 
     const ringMaterial =
       new THREE.MeshBasicMaterial({
-        color: 0x75c2ff,
+        color:
+          0x75c2ff,
         transparent: true,
         opacity: 0.34,
-        side: THREE.DoubleSide,
+        side:
+          THREE.DoubleSide,
       });
 
     const ringOne =
@@ -192,12 +199,10 @@ export function FinanceScene() {
 
     group.add(ringTwo);
 
-    /* =====================================================
-       PARTICLES
-    ===================================================== */
-
     const particleCount =
-      110;
+      compact
+        ? 54
+        : 110;
 
     const particlePositions =
       new Float32Array(
@@ -258,8 +263,12 @@ export function FinanceScene() {
 
     const particleMaterial =
       new THREE.PointsMaterial({
-        color: 0x79c8ff,
-        size: 0.025,
+        color:
+          0x79c8ff,
+        size:
+          compact
+            ? 0.032
+            : 0.025,
         transparent: true,
         opacity: 0.72,
       });
@@ -272,36 +281,33 @@ export function FinanceScene() {
 
     scene.add(particles);
 
-    /* =====================================================
-       POINTER
-    ===================================================== */
-
     let pointerX = 0;
     let pointerY = 0;
 
-    const handlePointerMove =
-      (
-        event:
-          PointerEvent,
-      ): void => {
-        pointerX =
-          (
-            event.clientX /
-              window.innerWidth -
-            0.5
-          ) *
-          0.35;
+    const handlePointerMove = (
+      event: PointerEvent,
+    ): void => {
+      pointerX =
+        (
+          event.clientX /
+            window.innerWidth -
+          0.5
+        ) *
+        0.35;
 
-        pointerY =
-          (
-            event.clientY /
-              window.innerHeight -
-            0.5
-          ) *
-          0.22;
-      };
+      pointerY =
+        (
+          event.clientY /
+            window.innerHeight -
+          0.5
+        ) *
+        0.22;
+    };
 
-    if (!reducedMotion) {
+    if (
+      !reducedMotion &&
+      !compact
+    ) {
       window.addEventListener(
         'pointermove',
         handlePointerMove,
@@ -311,35 +317,30 @@ export function FinanceScene() {
       );
     }
 
-    /* =====================================================
-       RESIZE
-    ===================================================== */
-
-    const resize =
-      (): void => {
-        const width =
-          Math.max(
-            parent.clientWidth,
-            1,
-          );
-
-        const height =
-          Math.max(
-            parent.clientHeight,
-            1,
-          );
-
-        renderer.setSize(
-          width,
-          height,
-          false,
+    const resize = (): void => {
+      const width =
+        Math.max(
+          parent.clientWidth,
+          1,
         );
 
-        camera.aspect =
-          width / height;
+      const height =
+        Math.max(
+          parent.clientHeight,
+          1,
+        );
 
-        camera.updateProjectionMatrix();
-      };
+      renderer.setSize(
+        width,
+        height,
+        false,
+      );
+
+      camera.aspect =
+        width / height;
+
+      camera.updateProjectionMatrix();
+    };
 
     const resizeObserver =
       new ResizeObserver(
@@ -352,89 +353,179 @@ export function FinanceScene() {
 
     resize();
 
-    /* =====================================================
-       ANIMATION
-    ===================================================== */
-
     const clock =
       new THREE.Clock();
 
     let animationFrame = 0;
+    let visible = true;
+    let disposed = false;
 
-    const animate =
-      (): void => {
-        const elapsed =
-          clock.getElapsedTime();
+    const renderFrame = (): void => {
+      renderer.render(
+        scene,
+        camera,
+      );
+    };
 
-        if (!reducedMotion) {
-          group.rotation.y +=
-            (
-              pointerX -
-              group.rotation.y
-            ) *
-            0.025;
+    const animate = (): void => {
+      if (
+        disposed ||
+        !visible ||
+        document.hidden
+      ) {
+        animationFrame = 0;
+        return;
+      }
 
-          group.rotation.x +=
-            (
-              -pointerY -
-              group.rotation.x
-            ) *
-            0.025;
+      const elapsed =
+        clock.getElapsedTime();
 
-          core.rotation.y +=
-            0.003;
+      group.rotation.y +=
+        (
+          pointerX -
+          group.rotation.y
+        ) *
+        0.025;
 
-          core.rotation.z +=
-            0.001;
+      group.rotation.x +=
+        (
+          -pointerY -
+          group.rotation.x
+        ) *
+        0.025;
 
-          inner.rotation.y -=
-            0.002;
+      core.rotation.y +=
+        compact
+          ? 0.0015
+          : 0.003;
 
-          inner.rotation.x =
-            Math.sin(
-              elapsed * 0.5,
-            ) *
-            0.15;
+      core.rotation.z +=
+        0.001;
 
-          ringOne.rotation.z +=
-            0.002;
+      inner.rotation.y -=
+        0.002;
 
-          ringTwo.rotation.y -=
-            0.0016;
+      inner.rotation.x =
+        Math.sin(
+          elapsed * 0.5,
+        ) *
+        0.15;
 
-          particles.rotation.y +=
-            0.0005;
+      ringOne.rotation.z +=
+        0.002;
 
-          particles.rotation.x =
-            Math.sin(
-              elapsed * 0.15,
-            ) *
-            0.04;
-        }
+      ringTwo.rotation.y -=
+        0.0016;
 
-        renderer.render(
-          scene,
-          camera,
+      particles.rotation.y +=
+        0.0005;
+
+      particles.rotation.x =
+        Math.sin(
+          elapsed * 0.15,
+        ) *
+        0.04;
+
+      renderFrame();
+
+      animationFrame =
+        window.requestAnimationFrame(
+          animate,
+        );
+    };
+
+    const startAnimation = (): void => {
+      if (
+        disposed ||
+        reducedMotion ||
+        !visible ||
+        document.hidden ||
+        animationFrame !== 0
+      ) {
+        return;
+      }
+
+      clock.start();
+
+      animationFrame =
+        window.requestAnimationFrame(
+          animate,
+        );
+    };
+
+    const stopAnimation = (): void => {
+      if (
+        animationFrame !== 0
+      ) {
+        window.cancelAnimationFrame(
+          animationFrame,
         );
 
-        animationFrame =
-          window.requestAnimationFrame(
-            animate,
-          );
-      };
+        animationFrame = 0;
+      }
 
-    animate();
+      clock.stop();
+    };
 
-    /* =====================================================
-       CLEANUP
-    ===================================================== */
+    const visibilityObserver =
+      new IntersectionObserver(
+        (entries) => {
+          visible =
+            entries.some(
+              (entry) =>
+                entry.isIntersecting,
+            );
 
-    return () => {
-      window.cancelAnimationFrame(
-        animationFrame,
+          if (visible) {
+            startAnimation();
+          } else {
+            stopAnimation();
+          }
+        },
+        {
+          rootMargin:
+            '120px',
+        },
       );
 
+    visibilityObserver.observe(
+      canvas,
+    );
+
+    const handleVisibilityChange =
+      (): void => {
+        if (
+          document.hidden
+        ) {
+          stopAnimation();
+        } else {
+          startAnimation();
+        }
+      };
+
+    document.addEventListener(
+      'visibilitychange',
+      handleVisibilityChange,
+    );
+
+    renderFrame();
+
+    if (!reducedMotion) {
+      startAnimation();
+    }
+
+    return () => {
+      disposed = true;
+
+      stopAnimation();
+
       resizeObserver.disconnect();
+      visibilityObserver.disconnect();
+
+      document.removeEventListener(
+        'visibilitychange',
+        handleVisibilityChange,
+      );
 
       window.removeEventListener(
         'pointermove',
@@ -462,10 +553,14 @@ export function FinanceScene() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
+      data-performance-scene="finance"
       style={{
-        display: 'block',
-        width: '100%',
-        height: '100%',
+        display:
+          'block',
+        width:
+          '100%',
+        height:
+          '100%',
       }}
     />
   );
