@@ -6,7 +6,7 @@
 ========================================================= */
 
 :root {
-  --background: #f7f9fc;
+  --background: #dfe5ee;
   --surface: #ffffff;
   --surface-soft: #f3f7fc;
 
@@ -14235,5 +14235,22 @@ iframe {
       13px !important;
   }
 }
+
+/* STAGE EMPLOYEE PAYMENTS TYPOGRAPHY START */
+
+.employee-payment-history-main > div > span { font-size: 12px; line-height: 1.4; }
+.employee-payment-history-main > div > strong { font-size: 15px; line-height: 1.35; }
+.employee-payment-history-main > button { min-height: 38px; padding: 0 14px; font-size: 12px; }
+.employee-payment-history-main .settlement-status { min-height: 32px; padding: 0 13px; font-size: 11px; }
+.employee-payment-paid-at { font-size: 12px; line-height: 1.45; }
+.employee-payment-detail-grid span { font-size: 11px; line-height: 1.4; }
+.employee-payment-detail-grid strong { font-size: 14px; line-height: 1.35; }
+.employee-adjustments > strong { font-size: 13px; }
+.employee-adjustment-row { font-size: 12px; line-height: 1.45; }
+.employee-adjustment-row > strong { font-size: 13px; }
+.employee-adjustment-row .adjustment-type { min-height: 28px; padding: 0 10px; font-size: 10px; }
+.settlement-adjustment-empty { font-size: 12px; }
+
+/* STAGE EMPLOYEE PAYMENTS TYPOGRAPHY END */
 
 /* STAGE 13E MOBILE SIDEBAR DESKTOP LAYOUT END */
