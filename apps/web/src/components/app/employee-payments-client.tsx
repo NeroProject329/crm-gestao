@@ -10,7 +10,6 @@ import {
 import {
   AlertTriangle,
   Banknote,
-  CalendarDays,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
@@ -35,6 +34,14 @@ import {
   formatBRL,
   formatBusinessDate,
 } from '@/lib/format';
+
+import {
+  MoneyCounter,
+} from '@/components/motion/money-counter';
+
+import {
+  FinanceScene,
+} from '@/components/three/finance-scene';
 
 function statusLabel(
   status:
@@ -329,60 +336,65 @@ const history =
       ) : null}
 
       {current ? (
-        <article className="employee-payment-hero">
-          <div className="employee-payment-hero-copy">
-            <span className="section-kicker">
-              SEMANA ATUAL
-            </span>
-
-            <h1>
-              Seu fechamento.
-            </h1>
-
-            <p>
-              Acompanhe o valor acumulado da semana,
-              o status do fechamento e seu histórico
-              de pagamentos.
-            </p>
-
-            <div className="employee-payment-period">
-              <CalendarDays
-                size={16}
+        <section
+          className="hero-card"
+          data-motion="hero"
+          aria-labelledby="payments-hero-value"
+        >
+          <div className="hero-content">
+            <span className="hero-eyebrow">
+              <ReceiptText
+                size={15}
               />
 
-              {formatBusinessDate(
-                current
-                  .periodStart,
-              )}
-              {' — '}
-              {formatBusinessDate(
-                current
-                  .periodEnd,
-              )}
+              Fechamento semanal
+            </span>
+
+            <h2
+              id="payments-hero-value"
+              className="hero-value"
+            >
+              <MoneyCounter
+                value={
+                  current
+                    .employeeAmount
+                }
+              />
+            </h2>
+
+            <p className="hero-subtitle">
+              Valor acumulado na semana atual,
+              calculado a partir dos dados aprovados.
+            </p>
+
+            <div className="hero-meta">
+              <span>
+                {formatBusinessDate(
+                  current
+                    .periodStart,
+                )}
+                {' — '}
+                {formatBusinessDate(
+                  current
+                    .periodEnd,
+                )}
+              </span>
+
+              <span>
+                {statusLabel(
+                  current.status,
+                )}
+              </span>
             </div>
           </div>
 
-          <div className="employee-payment-main-value">
-            <span>
-              Seu valor
-            </span>
-
-            <strong>
-              {formatBRL(
-                current
-                  .employeeAmount,
-              )}
-            </strong>
-
-            <span
-              className={`settlement-status ${current.status.toLowerCase()}`}
-            >
-              {statusLabel(
-                current.status,
-              )}
-            </span>
+          <div
+            className="hero-three"
+            aria-hidden="true"
+          >
+            <FinanceScene />
           </div>
-        </article>
+        </section>
       ) : null}
 
       {current ? (
