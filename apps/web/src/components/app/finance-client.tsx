@@ -7,11 +7,11 @@ import {
 } from 'react';
 
 import {
-  CalendarDays,
   CircleDollarSign,
   CreditCard,
   Megaphone,
   RefreshCw,
+  Sparkles,
   TrendingUp,
   WalletCards,
 } from 'lucide-react';
@@ -33,6 +33,14 @@ import {
   formatBRL,
   formatBusinessDate,
 } from '@/lib/format';
+
+import {
+  MoneyCounter,
+} from '@/components/motion/money-counter';
+
+import {
+  FinanceScene,
+} from '@/components/three/finance-scene';
 
 import {
   FinancialChart,
@@ -301,50 +309,6 @@ export function FinanceClient() {
 
   return (
     <section className="finance-page">
-      <div className="finance-header finance-reveal">
-        <div>
-          <span className="section-kicker">
-            HISTÓRICO FINANCEIRO
-          </span>
-
-          <h1>
-            Sua operação,
-            <br />
-            dia após dia.
-          </h1>
-
-          <p>
-            Consulte faturamento aprovado,
-            ADS, custo bancário, seu resultado
-            e a evolução da dívida.
-          </p>
-        </div>
-
-        {data ? (
-          <div className="finance-period-badge">
-            <CalendarDays
-              size={18}
-            />
-
-            <div>
-              <span>
-                Período atual
-              </span>
-
-              <strong>
-                {formatBusinessDate(
-                  data.period.from,
-                )}
-                {' — '}
-                {formatBusinessDate(
-                  data.period.to,
-                )}
-              </strong>
-            </div>
-          </div>
-        ) : null}
-      </div>
-
       <div className="finance-filter-panel finance-reveal">
         <div className="finance-preset-list">
           {PRESETS.map(
@@ -445,6 +409,65 @@ export function FinanceClient() {
 
       {data ? (
         <>
+          <section
+            className="hero-card finance-reveal"
+            data-motion="hero"
+            aria-labelledby="finance-hero-title"
+          >
+            <div className="hero-content">
+              <span className="hero-eyebrow">
+                <Sparkles
+                  size={15}
+                />
+
+                Histórico financeiro
+              </span>
+
+              <h2
+                id="finance-hero-title"
+                className="hero-value"
+              >
+                <MoneyCounter
+                  value={
+                    data.summary
+                      .employeeAmount
+                  }
+                />
+              </h2>
+
+              <p className="hero-subtitle">
+                Seu resultado consolidado
+                no período selecionado.
+              </p>
+
+              <div className="hero-meta">
+                <span>
+                  {formatBusinessDate(
+                    data.period.from,
+                  )}
+                  {' — '}
+                  {formatBusinessDate(
+                    data.period.to,
+                  )}
+                </span>
+
+                <span>
+                  {
+                    data.days
+                      .length
+                  } dias processados
+                </span>
+              </div>
+            </div>
+
+            <div
+              className="hero-three"
+              aria-hidden="true"
+            >
+              <FinanceScene />
+            </div>
+          </section>
+
           <div className="finance-summary-grid">
             <article className="finance-summary-card finance-reveal">
               <div className="finance-summary-icon">
