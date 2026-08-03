@@ -42,6 +42,10 @@ import {
   formatBusinessDate,
 } from '@/lib/format';
 
+import {
+  FinanceScene,
+} from '@/components/three/finance-scene';
+
 const MAX_FILE_BYTES =
   10 *
   1024 *
@@ -914,43 +918,50 @@ export function ReceiptsClient() {
           HEADER
       ================================================== */}
 
-      <div className="receipts-header receipt-reveal">
-        <div>
-          <span className="section-kicker">
-            COMPROVANTES
+      <section
+        className="hero-card receipt-reveal"
+        data-motion="hero"
+        aria-labelledby="receipts-hero-title"
+      >
+        <div className="hero-content">
+          <span className="hero-eyebrow">
+            <FileCheck2
+              size={15}
+            />
+
+            Comprovantes
           </span>
 
-          <h1>
-            Registre seus
-            <br />
-            pagamentos.
-          </h1>
+          <h2
+            id="receipts-hero-title"
+            className="hero-value"
+          >
+            Envie com segurança.
+          </h2>
 
-          <p>
-            Envie o comprovante e acompanhe
-            o status da análise sem precisar
-            informar faturamento manualmente.
+          <p className="hero-subtitle">
+            Registre seus pagamentos e acompanhe
+            cada etapa da análise em um só lugar.
           </p>
-        </div>
 
-        <div className="receipt-security-card">
-          <FileCheck2
-            size={
-              24
-            }
-          />
-
-          <div>
-            <strong>
+          <div className="hero-meta">
+            <span>
               Arquivo privado
-            </strong>
+            </span>
 
             <span>
               PDF, JPG ou PNG • até 10 MB
             </span>
           </div>
         </div>
-      </div>
+
+        <div
+          className="hero-three"
+          aria-hidden="true"
+        >
+          <FinanceScene />
+        </div>
+      </section>
 
       {/* ==================================================
           FORM + EXPLANATION
